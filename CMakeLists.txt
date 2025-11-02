@@ -16,6 +16,8 @@ project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
 
+include(include/oscpack.cmake)
+
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
   PRODUCT_NAME "${TARGET_NAME}"
@@ -30,6 +32,9 @@ target_compile_definitions(${TARGET_NAME}
   PUBLIC
   JUCE_WEB_BROWSER=0
   JUCE_USE_CURL=0
+
+  JUCE_APPLICATION_NAME_STRING="${TARGET_NAME}"
+  JUCE_APPLICATION_VERSION_STRING="${VERSION_NUMBER}"
 
   DONT_SET_USING_JUCE_NAMESPACE=1
 
@@ -56,9 +61,14 @@ target_link_libraries(${TARGET_NAME}
   PRIVATE
   BinaryData
 
+  oscpack
+  
   # ADD JUCE MODULES HERE # [EDIT]
+  juce::juce_core
   juce::juce_gui_basics
   juce::juce_gui_extra
+  juce::juce_events
+  juce::juce_osc
 
   PUBLIC
   juce::juce_recommended_config_flags

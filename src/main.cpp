@@ -1,5 +1,7 @@
 #include "MainComponent.h"
 
+#include "macros.h"
+
 //==============================================================================
 class GuiAppApplication final : public juce::JUCEApplication
 {

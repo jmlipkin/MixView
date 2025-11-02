@@ -1,3 +1,6 @@
 [submodule "include/JUCE"]
 	path = include/JUCE
 	url = https://github.com/juce-framework/JUCE.git
+[submodule "include/oscpack"]
+	path = include/oscpack
+	url = https://github.com/mkalten/oscpack.git
