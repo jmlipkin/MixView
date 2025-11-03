@@ -22,12 +22,15 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+    void startButtonClicked();
+
 private:
     //==============================================================================
     // Your private member variables go here...
     X32Connect connector;
 
     juce::Label Xip_str;
+    juce::TextButton starter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

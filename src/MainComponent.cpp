@@ -1,6 +1,6 @@
 #include "MainComponent.h"
 
-#include "macros.h"
+#include "Macros.h"
 #include "X32Connect.h"
 
 //==============================================================================
@@ -13,15 +13,14 @@ MainComponent::MainComponent()
     Xip_str.setText(connector.get_Xip(), juce::dontSendNotification);
     addAndMakeVisible(Xip_str);
 
-    connector.set_Xip("127.0.0.1");
-    connector.set_Xport(10023);
+    starter.setButtonText("Start");
+    starter.setToggleable(true);
+    starter.setToggleState(true, juce::dontSendNotification);
+    starter.onClick = [this]
+    { startButtonClicked(); };
+    addAndMakeVisible(starter);
 
-    juce::OSCAddressPattern adr("/info");
-    juce::OSCMessage msg(adr);
-    if (connector.sender.connect(connector.get_Xip(), connector.get_Xport()))
-    {
-        connector.sender.send(msg);
-    }
+    connector.set_timeout(5000);
 }
 
 //==============================================================================
@@ -37,8 +36,27 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    Xip_str.setBounds(200, 300, 100, 20);
+    Xip_str.setBounds(100, 10, 100, 20);
+    starter.setBounds(10, 10, 60, 20);
     // This is called when the MainComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+}
+
+void MainComponent::startButtonClicked(){
+    if (starter.getToggleState())
+    {
+        starter.setButtonText("Running");
+        if (connector.connect("127.0.0.1", 10023))
+        {
+            connector.startThread();
+            DBG("Connector started thread" << DBG_STR);
+        }
+    }
+    else {
+        starter.setButtonText("Start");
+        connector.stopThread(800);
+            DBG("Connector stopped thread" << DBG_STR);
+    }
+    starter.setToggleState(!starter.getToggleState(), juce::dontSendNotification);
 }
