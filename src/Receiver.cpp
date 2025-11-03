@@ -1,16 +1,18 @@
 #include "Receiver.h"
 
-bool Receiver::connect_and_start(juce::DatagramSocket &socket) {
-    bool success = connectToSocket(socket);
-    if(success)
+void Receiver::run() {
+    receiver.addListener(this);
+    while (!threadShouldExit())
     {
-        addListener(this);
+        // Let the OSCReceiver handle message parsing on this thread
     }
-
-    return success;
+    DBG("Receiver thread ending...");
+    receiver.removeListener(this);
+    disconnect();
 }
 
-void Receiver::oscMessageReceived(const juce::OSCMessage &message) {
+void Receiver::oscMessageReceived(const juce::OSCMessage &message)
+{
     int num_args = message.size();
     juce::String msg_str = message.getAddressPattern().toString();
 
@@ -22,7 +24,8 @@ void Receiver::oscMessageReceived(const juce::OSCMessage &message) {
     DBG(msg_str << DBG_STR);
 }
 
-juce::String Receiver::arg_to_str(const juce::OSCArgument &arg) {
+juce::String Receiver::arg_to_str(const juce::OSCArgument &arg)
+{
     switch (arg.getType())
     {
     case 'f':

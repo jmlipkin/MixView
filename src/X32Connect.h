@@ -9,18 +9,19 @@
 #include "Subscriber.h"
 #include "Receiver.h"
 
-class X32Connect : public juce::Component, public juce::Thread
+class X32Connect : public juce::Component
 {
 public:
     X32Connect();
-    ~X32Connect() override { stopThread(1000); free(Xip); sender.disconnect(); }
+    ~X32Connect() override { if (Xip != nullptr) delete Xip; if (this_ip != nullptr) delete this_ip; sender.disconnect(); }
 
     // Attempt to connect OSC send/receive to stored IP address/port
     bool connect();
     // Attempt to connect OSC send/receive to specified address/port
     bool connect(juce::String ip, int port);
 
-    void run() override;
+    void run();
+    void close(int timeout_milliseconds);
 
     void set_timeout(int timeout) { m_timeout = timeout; }
     int get_timeout() const { return m_timeout; }

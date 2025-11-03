@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # ----------------------------------------
 # VARIABLES
-set(PROJECT_NAME "V3_testing") # [EDIT]
-set(TARGET_NAME "v3test") # [EDIT]
+set(PROJECT_NAME "MixView") # [EDIT]
+set(TARGET_NAME "MixView") # [EDIT]
 set(VERSION_NUMBER 0.1.0)
 
 # ----------------------------------------
@@ -23,9 +23,9 @@ juce_add_gui_app(${TARGET_NAME}
   PRODUCT_NAME "${TARGET_NAME}"
 
   # manufacturer
-  COMPANY_NAME "My Company Name" # [EDIT]
-  PLUGIN_MANUFACTURER_CODE "Manu" # [EDIT]
-  BUNDLE_ID "com.manufacturer.plugin" # [EDIT]
+  COMPANY_NAME "Lipkinize" # [EDIT]
+  PLUGIN_MANUFACTURER_CODE "JLMV" # [EDIT]
+  BUNDLE_ID "com.Lipkinize.MixView" # [EDIT]
 )
 
 target_compile_definitions(${TARGET_NAME}

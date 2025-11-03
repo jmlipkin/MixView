@@ -49,22 +49,19 @@ void MainComponent::startButtonClicked(){
         starter.setButtonText("Running");
         if (connector.connect("127.0.0.1", 10023))
         {
-            connector.startThread();
-            DBG("Connector started thread" << DBG_STR);
-
-            connector.sender.get_info_X32();
+            connector.run();
         }
 
         int c = 0;
         while (c < 500)
         {
-            DBG("main thread " << c++);
+            DBG("Main thread " << c++);
             juce::Thread::sleep(100);
         }
     }
     else {
         starter.setButtonText("Stopping...");
-        connector.stopThread(-1);
+        connector.close(-1);
 
         DBG("Connector stopped thread" << DBG_STR);
         starter.setButtonText("Start");

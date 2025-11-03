@@ -7,7 +7,7 @@
 #include <juce_osc/juce_osc.h>
 // #include <chrono>
 
-class Subscriber : public juce::OSCSender
+class Subscriber : public juce::OSCSender, public juce::Thread
 {
 private:
     juce::IPAddress *Xip;
@@ -16,12 +16,24 @@ private:
     const juce::OSCMessage msg_x32_resub{juce::String("/xremote"), juce::String("on")};
     const juce::OSCMessage msg_x32_getinfo{juce::String("/info")};
 
-    int m_timeout;
-
-public:
-    Subscriber() {}
+    int m_timeout = 2000;
 
     void resub_to_X32() { this->send(msg_x32_resub); }
+
+    void run() override {     
+        while (!threadShouldExit())
+        {
+            resub_to_X32();
+            DBG("X32 resub");
+            juce::Thread::sleep(m_timeout);
+        }
+        DBG("Subscriber thread ending...");
+        disconnect();
+    }
+
+public:
+    Subscriber() : juce::Thread("Subscriber") {}
+
     void get_info_X32() { this->send(msg_x32_getinfo); }
 
     void set_timeout(int timeout) { m_timeout = timeout; }
