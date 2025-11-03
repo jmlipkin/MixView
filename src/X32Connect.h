@@ -3,15 +3,16 @@
 
 #include <juce_core/juce_core.h>
 #include <juce_events/juce_events.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_osc/juce_osc.h>
 // #include <chrono>
 #include "Subscriber.h"
-#include "Listener.h"
+#include "Receiver.h"
 
-class X32Connect : public juce::Thread
+class X32Connect : public juce::Component, public juce::Thread
 {
 public:
-    X32Connect() : juce::Thread("X32Connect"), m_timeout(0) { Xip = new juce::IPAddress("127.0.0.1"); }
+    X32Connect();
     ~X32Connect() override { stopThread(1000); free(Xip); sender.disconnect(); }
 
     // Attempt to connect OSC send/receive to stored IP address/port
@@ -33,12 +34,20 @@ public:
     private:
         int m_timeout;
         juce::IPAddress *Xip;
-        // juce::DatagramSocket X_socket;
         int Xport = 10023;
+
+        juce::IPAddress *this_ip;
+        int this_port = 12345;
+
+        juce::DatagramSocket this_socket;
 
     public:
         // juce::OSCSender sender;
         Subscriber sender;
+        Receiver receiver;
+
+        juce::Label send_label;
+        juce::Label rec_label;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(X32Connect)
 };

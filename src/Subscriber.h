@@ -21,9 +21,7 @@ private:
 public:
     Subscriber() {}
 
-    void resub_to_X32() { this->send(msg_x32_resub);
-        DBG("Resubscribing to X32" << DBG_STR);
-    }
+    void resub_to_X32() { this->send(msg_x32_resub); }
     void get_info_X32() { this->send(msg_x32_getinfo); }
 
     void set_timeout(int timeout) { m_timeout = timeout; }

@@ -51,12 +51,23 @@ void MainComponent::startButtonClicked(){
         {
             connector.startThread();
             DBG("Connector started thread" << DBG_STR);
+
+            connector.sender.get_info_X32();
+        }
+
+        int c = 0;
+        while (c < 500)
+        {
+            DBG("main thread " << c++);
+            juce::Thread::sleep(100);
         }
     }
     else {
+        starter.setButtonText("Stopping...");
+        connector.stopThread(-1);
+
+        DBG("Connector stopped thread" << DBG_STR);
         starter.setButtonText("Start");
-        connector.stopThread(800);
-            DBG("Connector stopped thread" << DBG_STR);
     }
     starter.setToggleState(!starter.getToggleState(), juce::dontSendNotification);
 }
