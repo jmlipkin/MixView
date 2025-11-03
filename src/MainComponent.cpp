@@ -47,16 +47,9 @@ void MainComponent::startButtonClicked(){
     if (starter.getToggleState())
     {
         starter.setButtonText("Running");
-        if (connector.connect("127.0.0.1", 10023))
+        if (connector.connect("10.5.136.59", 10023))
         {
             connector.run();
-        }
-
-        int c = 0;
-        while (c < 500)
-        {
-            DBG("Main thread " << c++);
-            juce::Thread::sleep(100);
         }
     }
     else {

@@ -24,7 +24,7 @@ private:
         while (!threadShouldExit())
         {
             resub_to_X32();
-            DBG("X32 resub");
+            // DBG("X32 resub");
             juce::Thread::sleep(m_timeout);
         }
         DBG("Subscriber thread ending...");

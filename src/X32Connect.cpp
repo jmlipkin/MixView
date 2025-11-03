@@ -2,10 +2,12 @@
 
 #include <juce_core/juce_core.h>
 
+#define IP "10.5.136.59"
+
 X32Connect::X32Connect() : m_timeout(0)
 {
-    Xip = new juce::IPAddress("127.0.0.1");
-    this_ip = new juce::IPAddress("127.0.0.1");
+    Xip = new juce::IPAddress(IP);
+    this_ip = new juce::IPAddress(IP);
 }
 
 void X32Connect::run()

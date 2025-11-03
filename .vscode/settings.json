@@ -1,6 +1,8 @@
 {
     "files.associations": {
-        "*.mm": "cpp"
+        "*.mm": "cpp",
+        "__locale": "cpp",
+        "ios": "cpp"
     },
     "explorer.sortOrder": "foldersNestsFiles"
 
