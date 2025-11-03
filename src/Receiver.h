@@ -2,28 +2,40 @@
 
 #include "Macros.h"
 
-#include "Fader.h"
-
 #include <juce_core/juce_core.h>
 #include <juce_events/juce_events.h>
 #include <juce_osc/juce_osc.h>
 
-class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<juce::OSCReceiver::RealtimeCallback>
+class Receiver : public juce::OSCReceiver::Listener<juce::OSCReceiver::RealtimeCallback>,
+                  public juce::Thread
 {
 private:
     juce::String arg_to_str(const juce::OSCArgument &arg);
+    juce::OSCReceiver receiver;
     juce::DatagramSocket* m_socket;
-
-    Fader ch1;
+    juce::CriticalSection socketLock;
 
 public:
-    Receiver() {}
+    Receiver() : juce::Thread("Receiver") {}
 
-    void setSocket(juce::DatagramSocket * socket) { m_socket = socket; }
+    ~Receiver() override {
+        stopThread(1000);
+        receiver.removeListener(this);
+        receiver.disconnect();
+    }
 
-    void open() { addListener(this); }
-    void close() { removeListener(this); }
+    bool connectToSocket(juce::DatagramSocket& socket) {
+        const juce::ScopedLock sl(socketLock);
+        m_socket = &socket;
+        return receiver.connectToSocket(socket);
+    }
 
+    void disconnect() {
+        const juce::ScopedLock sl(socketLock);
+        receiver.disconnect();
+    }
+
+    void run() override;
     void oscMessageReceived(const juce::OSCMessage& message) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Receiver)
