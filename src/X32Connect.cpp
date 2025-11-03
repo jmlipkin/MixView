@@ -12,13 +12,13 @@ void X32Connect::run()
 {
     sender.get_info_X32();
     sender.startThread();
-    receiver.startThread();
+    receiver.open();
 }
 
 void X32Connect::close(int timeout_milliseconds)
 {
     sender.stopThread(timeout_milliseconds);
-    receiver.stopThread(timeout_milliseconds);
+    receiver.close();
 }
 
 bool X32Connect::connect()
@@ -27,8 +27,10 @@ bool X32Connect::connect()
     bool success = this_socket.bindToPort(this_port, this_ip->toString());
     if (success)
         success &= sender.connectToSocket(this_socket, Xip->toString(), Xport);
-    if (success)
+    if (success) {
         success &= receiver.connectToSocket(this_socket);
+        receiver.setSocket(&this_socket);
+    }
     if (success)
         DBG("Connected successfully");
 

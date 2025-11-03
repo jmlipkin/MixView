@@ -1,18 +1,6 @@
 #include "Receiver.h"
 
-void Receiver::run() {
-    receiver.addListener(this);
-    while (!threadShouldExit())
-    {
-        // Let the OSCReceiver handle message parsing on this thread
-    }
-    DBG("Receiver thread ending...");
-    receiver.removeListener(this);
-    disconnect();
-}
-
-void Receiver::oscMessageReceived(const juce::OSCMessage &message)
-{
+void Receiver::oscMessageReceived(const juce::OSCMessage &message) {
     int num_args = message.size();
     juce::String msg_str = message.getAddressPattern().toString();
 
@@ -24,8 +12,7 @@ void Receiver::oscMessageReceived(const juce::OSCMessage &message)
     DBG(msg_str << DBG_STR);
 }
 
-juce::String Receiver::arg_to_str(const juce::OSCArgument &arg)
-{
+juce::String Receiver::arg_to_str(const juce::OSCArgument &arg) {
     switch (arg.getType())
     {
     case 'f':
