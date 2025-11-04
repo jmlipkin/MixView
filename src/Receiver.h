@@ -3,6 +3,7 @@
 #include "Macros.h"
 
 #include "Fader.h"
+#include "MessageProcessor.h"
 
 #include <juce_core/juce_core.h>
 #include <juce_events/juce_events.h>
@@ -13,11 +14,10 @@ class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<ju
 private:
     juce::String arg_to_str(const juce::OSCArgument &arg);
     juce::DatagramSocket* m_socket;
-
-    Fader ch1;
+    MessageProcessor mp;
 
 public:
-    Receiver() {}
+    Receiver() : mp() {}
 
     void setSocket(juce::DatagramSocket * socket) { m_socket = socket; }
 

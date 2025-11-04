@@ -2,7 +2,9 @@
     "files.associations": {
         "*.mm": "cpp",
         "__locale": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "future": "cpp",
+        "map": "cpp"
     },
     "explorer.sortOrder": "foldersNestsFiles"
 

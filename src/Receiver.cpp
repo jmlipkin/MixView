@@ -1,27 +1,7 @@
 #include "Receiver.h"
 
 void Receiver::oscMessageReceived(const juce::OSCMessage &message) {
-    juce::String address = message.getAddressPattern().toString();
-    if (!address.compare("/ch/01/mix/fader"))
-    {
-        int num_args = message.size();
-        float val = message[0].getFloat32();
-        juce::String msg_str = address;
-
-        ch1.set_value(val);
-        DBG("ch01 = " << ch1.get_value() << " dB");
-    }
-    else {
-        int num_args = message.size();
-        juce::String msg_str = address;
-
-        for (int i = 0; i < num_args; i++)
-        {
-            msg_str += " " + arg_to_str(message[i]);
-        }
-
-        DBG(msg_str);
-    }
+    mp.add_to_buffer(message);
 }
 
 juce::String Receiver::arg_to_str(const juce::OSCArgument &arg) {

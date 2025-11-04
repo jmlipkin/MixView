@@ -57,7 +57,8 @@ void X32Connect::set_Xip(std::string ip)
 {
     if (Xip != nullptr)
     {
-        free(Xip);
+        delete Xip;
+        Xip = nullptr;
     }
     Xip = new juce::IPAddress(ip);
 }
