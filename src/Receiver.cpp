@@ -8,11 +8,7 @@ void Receiver::oscMessageReceived(const juce::OSCMessage &message) {
         float val = message[0].getFloat32();
         juce::String msg_str = address;
 
-        // for (int i = 0; i < num_args; i++)
-        // {
-        //     msg_str += " " + arg_to_str(message[i]);
-        // }
-
+        ch1.set_value(val);
         DBG("ch01 = " << ch1.get_value() << " dB");
     }
     else {
