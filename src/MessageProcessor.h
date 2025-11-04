@@ -30,11 +30,23 @@ public:
         auxins = new InputChannelStrip[NUM_AUXINS];
         buses = new InputChannelStrip[NUM_BUSES];
         matrices = new ChannelStrip[NUM_MATRICES];
-        dcas = new ChannelStrip[NUM_DCAS];
+        dcas = new DCAChannelStrip[NUM_DCAS];
 
         for (size_t i = 0; i < NUM_IN_CH; i++)
         {
             channels[i].set_num_and_ap(i);
+        }
+        for (size_t i = 0; i < NUM_AUXINS; i++)
+        {
+            auxins[i].set_num_and_ap(i);
+        }
+        for (size_t i = 0; i < NUM_BUSES; i++)
+        {
+            buses[i].set_num_and_ap(i);
+        }
+        for (size_t i = 0; i < NUM_MATRICES; i++)
+        {
+            matrices[i].set_num_and_ap(i);
         }
     }
     ~MessageProcessor()
@@ -71,64 +83,50 @@ public:
 
     void add_to_buffer(juce::OSCMessage message)
     {
+        size_t idx = 100;
         switch (find_channel_type(message))
         {
         case ChannelStrip::CH_TYPE::IN_CH:
         {
-            size_t idx = find_channel_idx(message, ChannelStrip::CH_TYPE::IN_CH);
+            idx = find_channel_idx(message, ChannelStrip::CH_TYPE::IN_CH);
             float val = message[0].getFloat32();
             channels[idx].set_fader_value(val);
             DBG("Ch " << channels[idx].get_num_index() + 1 << " set to " << channels[idx].get_fader_value() << " dB");
-            // if (!address.compare("/01/mix/fader"))
-            // {
-            //     float val = message[0].getFloat32();
-            //     juce::String msg_str = address;
-
-            //     channels[0].set_fader_value(val);
-            //     DBG("Channel number: " << channels[0].get_number());
-
-            //     DBG("ch01 = " << channels[0].get_fader_value() << " dB");
-            // }
+            break;
         }
         case ChannelStrip::CH_TYPE::AUX_IN:
-            break;
-        case ChannelStrip::CH_TYPE::BUS:
-            break;
-        case ChannelStrip::CH_TYPE::DCA:
-            break;
-        case ChannelStrip::CH_TYPE::MATRIX:
-            break;
-        case ChannelStrip::CH_TYPE::INVALID:
+        {
+            idx = find_channel_idx(message, ChannelStrip::CH_TYPE::AUX_IN);
             print_unprocessed_string(message);
             break;
+        }
+        case ChannelStrip::CH_TYPE::BUS:
+        {
+            idx = find_channel_idx(message, ChannelStrip::CH_TYPE::BUS);
+            print_unprocessed_string(message);
+            break;
+        }
+        case ChannelStrip::CH_TYPE::DCA:
+        {
+            idx = find_channel_idx(message, ChannelStrip::CH_TYPE::DCA);
+            print_unprocessed_string(message);
+            break;
+        }
+        case ChannelStrip::CH_TYPE::MATRIX:
+        {
+            idx = find_channel_idx(message, ChannelStrip::CH_TYPE::MATRIX);
+            print_unprocessed_string(message);
+            break;
+        }
+        case ChannelStrip::CH_TYPE::INVALID:
+        {
+            print_unprocessed_string(message);
+            break;
+        }
         default:
             print_unprocessed_string(message);
             break;
         }
-        // juce::String address = message.getAddressPattern().toString();
-
-        // if (!address.compare("/ch/01/mix/fader"))
-        // {
-        //     float val = message[0].getFloat32();
-        //     juce::String msg_str = address;
-
-        //     channels[0].set_fader_value(val);
-        //     DBG("Channel number: " << channels[0].get_number());
-
-        //     DBG("ch01 = " << channels[0].get_fader_value() << " dB");
-        // }
-        // else
-        // {
-        //     int num_args = message.size();
-        //     juce::String msg_str = address;
-
-        //     for (int i = 0; i < num_args; i++)
-        //     {
-        //         msg_str += " " + arg_to_str(message[i]);
-        //     }
-
-        //     DBG(msg_str);
-        // }
     }
 
     ChannelStrip::CH_TYPE find_channel_type(juce::OSCMessage &message)
@@ -141,7 +139,6 @@ public:
             if (address.startsWith(ChannelStrip::channel_type[i]))
             {
                 address = address.substring(ChannelStrip::channel_type[i].length());
-                // DBG("New address: " << address);
                 message.setAddressPattern(address);
                 return static_cast<ChannelStrip::CH_TYPE>(i);
             }
@@ -163,14 +160,64 @@ public:
                 if (address.startsWith(channels[i].get_num_ap().toString()))
                 {
                     address = address.substring(channels[i].get_num_ap().toString().length());
-                    // DBG("New address: " << address);
                     message.setAddressPattern(address);
                     return i;
                 }
             }
             break;
+        case ChannelStrip::CH_TYPE::AUX_IN:
+        {
+            for (size_t i = 0; i < NUM_AUXINS; i++)
+            {
+                if (address.startsWith(channels[i].get_num_ap().toString()))
+                {
+                    address = address.substring(channels[i].get_num_ap().toString().length());
+                    message.setAddressPattern(address);
+                    return i;
+                }
+            }
+        }
+        case ChannelStrip::CH_TYPE::BUS:
+        {
+            for (size_t i = 0; i < NUM_BUSES; i++)
+            {
+                if (address.startsWith(channels[i].get_num_ap().toString()))
+                {
+                    address = address.substring(channels[i].get_num_ap().toString().length());
+                    message.setAddressPattern(address);
+                    return i;
+                }
+            }
+
+        }
+        case ChannelStrip::CH_TYPE::DCA:
+        {
+            for (size_t i = 0; i < NUM_DCAS; i++)
+            {
+                if (address.startsWith(channels[i].get_num_ap().toString()))
+                {
+                    address = address.substring(channels[i].get_num_ap().toString().length());
+                    message.setAddressPattern(address);
+                    return i;
+                }
+            }
+        }
+        case ChannelStrip::CH_TYPE::MATRIX:
+        {
+            for (size_t i = 0; i < NUM_MATRICES; i++)
+            {
+                if (address.startsWith(channels[i].get_num_ap().toString()))
+                {
+                    address = address.substring(channels[i].get_num_ap().toString().length());
+                    message.setAddressPattern(address);
+                    return i;
+                }
+            }
+        }
+        case ChannelStrip::CH_TYPE::INVALID:
+            return 100;
         default:
-            break;
+            return 100;
         }
     }
 

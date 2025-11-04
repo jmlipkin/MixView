@@ -90,7 +90,7 @@ public:
         float get_value() { return value; }
     } Fader;
 
-private:
+protected:
     Number number;
     Name name;
     Color color;
@@ -107,6 +107,12 @@ public:
 
     void set_fader_value(float val) { fader.set_value(val); }
     float get_fader_value() { return fader.get_value(); }
+
+    juce::String get_name() { return name.value; }
+
+    void print_string_with_ch_id(juce::OSCMessage &message);
+
+    static juce::String arg_to_str(const juce::OSCArgument &arg);
 };
 
 class InputChannelStrip : public ChannelStrip
@@ -122,6 +128,8 @@ class DCAChannelStrip : public ChannelStrip
 {
 public:
     DCAChannelStrip() {}
+
+    void set_num_and_ap(size_t idx) override;
 };
 
 inline const std::map<float, float> &get_fader_map()
