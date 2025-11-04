@@ -1,6 +1,6 @@
 #pragma once
 
-#include "X32Connect.h"
+#include "OSCConnect.h"
 // CMake builds don't use an AppConfig.h, so it's safe to include juce module headers
 // directly. If you need to remain compatible with Projucer-generated builds, and
 // have called `juce_generate_juce_header(<thisTarget>)` in your CMakeLists.txt,
@@ -28,7 +28,7 @@ public:
 private:
     //==============================================================================
     // Your private member variables go here...
-    X32Connect connector;
+    OSCConnect connector;
 
     juce::Label Xip_str;
     juce::TextButton starter;

@@ -6,6 +6,7 @@
         "future": "cpp",
         "map": "cpp"
     },
-    "explorer.sortOrder": "foldersNestsFiles"
+    "explorer.sortOrder": "foldersNestsFiles",
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0}"
 
 }

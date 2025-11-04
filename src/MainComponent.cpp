@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 #include "Macros.h"
-#include "X32Connect.h"
+#include "OSCConnect.h"
 
 //==============================================================================
 MainComponent::MainComponent()

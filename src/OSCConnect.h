@@ -9,11 +9,11 @@
 #include "Subscriber.h"
 #include "Receiver.h"
 
-class X32Connect : public juce::Component
+class OSCConnect : public juce::Component
 {
 public:
-    X32Connect();
-    ~X32Connect() override { if (Xip != nullptr) delete Xip; if (this_ip != nullptr) delete this_ip; sender.disconnect(); }
+    OSCConnect();
+    ~OSCConnect() override { if (Xip != nullptr) delete Xip; if (this_ip != nullptr) delete this_ip; sender.disconnect(); }
 
     // Attempt to connect OSC send/receive to stored IP address/port
     bool connect();
@@ -30,25 +30,27 @@ public:
     void set_Xport(int port);
 
     juce::String get_Xip() const { return Xip->toString(); }
-    int get_Xport() const { return Xport; }
+    int get_port_x32() const { return PORT_X32; }
+    int get_port_tmix() const { return PORT_TMIX; }
 
-    private:
-        int m_timeout;
-        juce::IPAddress *Xip;
-        int Xport = 10023;
+private:
+    int m_timeout;
+    juce::IPAddress *Xip;
+    juce::IPAddress *this_ip;
 
-        juce::IPAddress *this_ip;
-        int this_port = 12345;
+    int PORT_X32 = 10023;
+    int PORT_TMIX = 32000;
+    int this_port = 12345;
 
-        juce::DatagramSocket this_socket;
+    juce::DatagramSocket this_socket;
 
-    public:
-        // juce::OSCSender sender;
-        Subscriber sender;
-        Receiver receiver;
+public:
+    // juce::OSCSender sender;
+    Subscriber sender;
+    Receiver receiver;
 
-        juce::Label send_label;
-        juce::Label rec_label;
+    juce::Label send_label;
+    juce::Label rec_label;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(X32Connect)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
 };

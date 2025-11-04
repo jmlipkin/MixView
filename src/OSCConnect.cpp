@@ -1,34 +1,34 @@
-#include "X32Connect.h"
+#include "OSCConnect.h"
 
 #include <juce_core/juce_core.h>
 
-#define IP "10.5.136.59"
+#define IP_X32 "10.5.136.59"
 
-X32Connect::X32Connect() : m_timeout(0)
+OSCConnect::OSCConnect() : m_timeout(0)
 {
-    Xip = new juce::IPAddress(IP);
-    this_ip = new juce::IPAddress(IP);
+    Xip = new juce::IPAddress(IP_X32);
+    this_ip = new juce::IPAddress(IP_X32);
 }
 
-void X32Connect::run()
+void OSCConnect::run()
 {
     sender.get_info_X32();
     sender.startThread();
     receiver.open();
 }
 
-void X32Connect::close(int timeout_milliseconds)
+void OSCConnect::close(int timeout_milliseconds)
 {
     sender.stopThread(timeout_milliseconds);
     receiver.close();
 }
 
-bool X32Connect::connect()
+bool OSCConnect::connect()
 {
 
     bool success = this_socket.bindToPort(this_port, this_ip->toString());
     if (success)
-        success &= sender.connectToSocket(this_socket, Xip->toString(), Xport);
+        success &= sender.connectToSocket(this_socket, Xip->toString(), PORT_X32);
     if (success) {
         success &= receiver.connectToSocket(this_socket);
         receiver.setSocket(&this_socket);
@@ -39,7 +39,7 @@ bool X32Connect::connect()
     return success;
 }
 
-bool X32Connect::connect(juce::String ip, int port)
+bool OSCConnect::connect(juce::String ip, int port)
 {
 
     bool success = this_socket.bindToPort(this_port, this_ip->toString());
@@ -53,7 +53,7 @@ bool X32Connect::connect(juce::String ip, int port)
     return success;
 }
 
-void X32Connect::set_Xip(std::string ip)
+void OSCConnect::set_Xip(std::string ip)
 {
     if (Xip != nullptr)
     {
@@ -63,7 +63,7 @@ void X32Connect::set_Xip(std::string ip)
     Xip = new juce::IPAddress(ip);
 }
 
-void X32Connect::set_Xport(int port)
+void OSCConnect::set_Xport(int port)
 {
-    Xport = port;
+    PORT_X32 = port;
 }
