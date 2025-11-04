@@ -1,12 +1,11 @@
 #pragma once
 
-// #include "faderValueMap.h"
-
 #include <bitset>
 #include <map>
 #include <assert.h>
 
 #include <juce_core/juce_core.h>
+#include <juce_osc/juce_osc.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 inline const std::map<float, float> &get_fader_map();
@@ -14,33 +13,66 @@ inline const std::map<float, float> &get_fader_map();
 class ChannelStrip
 {
 private:
-
 protected:
-    typedef enum
+    typedef struct Color
     {
-        OFF,
-        RD,
-        GN,
-        YE,
-        BL,
-        MG,
-        CY,
-        WH,
-        OFFi,
-        RDi,
-        GNi,
-        YEi,
-        BLi,
-        MGi,
-        CYi,
-        WHi
+        juce::OSCAddress ap = "/config/color";
+        enum value
+        {
+            OFF,
+            RD,
+            GN,
+            YE,
+            BL,
+            MG,
+            CY,
+            WH,
+            OFFi,
+            RDi,
+            GNi,
+            YEi,
+            BLi,
+            MGi,
+            CYi,
+            WHi
+        };
     } Color;
 
-    typedef juce::String Name;
+    typedef struct Name
+    {
+        juce::OSCAddress ap = "/config/name";
+        juce::String value;
+    } Name;
+
+    typedef struct OnState
+    {
+        juce::OSCAddress ap = "/on";
+        enum state
+        {
+            OFF,
+            ON
+        };
+    } OnState;
+    
+    typedef struct Number {
+        juce::OSCAddress ap = "/00";
+        size_t index;
+    } Number;
 
 public:
+    typedef enum CH_TYPE
+    {
+        IN_CH,
+        AUX_IN,
+        BUS,
+        MATRIX,
+        DCA,
+        INVALID
+    } CH_TYPE;
+    static const std::vector<juce::String> channel_type;
     typedef struct Fader
     {
+        juce::OSCAddress ap = "/fader";
         float value;
         const std::map<float, float> faderMap;
 
@@ -58,13 +90,23 @@ public:
         float get_value() { return value; }
     } Fader;
 
-    // TODO: fix access
-public:
+private:
+    Number number;
     Name name;
     Color color;
+    OnState state;
     Fader fader;
 
-    ChannelStrip() {  }
+public:
+    ChannelStrip() {}
+
+    virtual void set_num_and_ap(size_t idx);
+    
+    juce::OSCAddress get_num_ap() const { return number.ap; }
+    size_t get_num_index() const { return number.index; }
+
+    void set_fader_value(float val) { fader.set_value(val); }
+    float get_fader_value() { return fader.get_value(); }
 };
 
 class InputChannelStrip : public ChannelStrip
@@ -73,16 +115,14 @@ protected:
     typedef std::bitset<8> DCA_assign;
 
 public:
-    InputChannelStrip()
-    {
-
-    }
+    InputChannelStrip() {}
 };
 
-
-
-
-
+class DCAChannelStrip : public ChannelStrip
+{
+public:
+    DCAChannelStrip() {}
+};
 
 inline const std::map<float, float> &get_fader_map()
 {

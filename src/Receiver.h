@@ -2,7 +2,6 @@
 
 #include "Macros.h"
 
-#include "Fader.h"
 #include "MessageProcessor.h"
 
 #include <juce_core/juce_core.h>

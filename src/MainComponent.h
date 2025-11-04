@@ -17,6 +17,7 @@ class MainComponent final : public juce::Component
 public:
     //==============================================================================
     MainComponent();
+    ~MainComponent() override { connector.close(-1); }
 
     //==============================================================================
     void paint (juce::Graphics&) override;

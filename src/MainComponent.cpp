@@ -51,6 +51,8 @@ void MainComponent::startButtonClicked(){
         {
             connector.run();
         }
+
+        // MAKE_BUSY();
     }
     else {
         starter.setButtonText("Stopping...");
