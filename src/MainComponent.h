@@ -30,7 +30,9 @@ private:
     // Your private member variables go here...
     OSCConnect connector;
 
-    juce::Label Xip_str;
+    juce::Label ip_str_X32;
+    juce::Label ip_str_tmix;
+    juce::Label ip_str_this;
     juce::TextButton starter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

@@ -10,14 +10,17 @@
 class Subscriber : public juce::OSCSender, public juce::Thread
 {
 private:
-    juce::IPAddress *Xip;
-    int PORT_X32 = 10023;
-    int PORT_TMIX = 32000;
+
+    static const int PORT_X32 = 10023;
+    static const int PORT_TMIX = 32000;
+
+    int m_port;
 
     const juce::OSCMessage msg_x32_resub{juce::String("/xremote"), juce::String("on")};
-    const juce::OSCMessage msg_x32_getinfo{juce::String("/info")};
-
     const juce::OSCMessage msg_tmix_resub{juce::String("/subscribe")};
+
+    const juce::OSCMessage msg_x32_getinfo{juce::String("/info")};
+    const juce::OSCMessage msg_tmix_getinfo{juce::String("/theatremix")};
 
     int m_timeout = 2000;
 
@@ -27,7 +30,10 @@ private:
     void run() override {     
         while (!threadShouldExit())
         {
-            resub_to_x32();
+            if(m_port == PORT_X32)
+                resub_to_x32();
+            else if(m_port == PORT_TMIX)
+                resub_to_tmix();
             juce::Thread::sleep(m_timeout);
         }
         DBG("Subscriber thread ending...");
@@ -38,14 +44,14 @@ public:
     Subscriber() : juce::Thread("Subscriber") {}
     ~Subscriber() override { disconnect(); }
 
-    void get_info_X32() { this->send(msg_x32_getinfo); }
+    // Must be called in container's constructor
+    void set_port(int port) { m_port = port; }
+
+    void get_info_X32() { if(m_port == PORT_X32) {this->send(msg_x32_getinfo); } }
+    void get_info_tmix() { if(m_port == PORT_TMIX) {this->send(msg_tmix_getinfo); } }
 
     void set_timeout(int timeout) { m_timeout = timeout; }
     int get_timeout() const { return m_timeout; }
-
-    juce::String get_Xip() const { return Xip->toString(); }
-    int get_port_x32 () const { return PORT_X32; }
-    int get_port_tmix () const { return PORT_TMIX; }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Subscriber)
 };

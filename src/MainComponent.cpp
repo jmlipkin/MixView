@@ -3,15 +3,25 @@
 #include "Macros.h"
 #include "OSCConnect.h"
 
+#define IP_ADDRESS "127.0.0.1"
+
 //==============================================================================
 MainComponent::MainComponent()
 {
-    setSize (600, 400);
+    setSize (590, 410);
 
     DBG("Program started" << DBG_STR);
 
-    Xip_str.setText(connector.get_Xip(), juce::dontSendNotification);
-    addAndMakeVisible(Xip_str);
+    connector.set_ip_this(IP_ADDRESS);
+    connector.set_ip_tmix(IP_ADDRESS);
+    connector.set_ip_X32(IP_ADDRESS);
+
+    ip_str_X32.setText("X32: " + connector.get_ip_X32(), juce::dontSendNotification);
+    addAndMakeVisible(ip_str_X32);
+    ip_str_tmix.setText("TMix: " + connector.get_ip_tmix(), juce::dontSendNotification);
+    addAndMakeVisible(ip_str_tmix);
+    ip_str_this.setText("This: " + connector.get_ip_this(), juce::dontSendNotification);
+    addAndMakeVisible(ip_str_this);
 
     starter.setButtonText("Start");
     starter.setToggleable(true);
@@ -20,7 +30,7 @@ MainComponent::MainComponent()
     { startButtonClicked(); };
     addAndMakeVisible(starter);
 
-    connector.set_timeout(5000);
+    connector.set_timeout(1000);
 }
 
 //==============================================================================
@@ -36,7 +46,9 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    Xip_str.setBounds(100, 10, 100, 20);
+    ip_str_X32.setBounds(100, 10, 100, 20);
+    ip_str_this.setBounds(200, 10, 100, 20);
+    ip_str_tmix.setBounds(300, 10, 100, 20);
     starter.setBounds(10, 10, 60, 20);
     // This is called when the MainComponent is resized.
     // If you add any child components, this is where you should
@@ -47,9 +59,9 @@ void MainComponent::startButtonClicked(){
     if (starter.getToggleState())
     {
         starter.setButtonText("Running");
-        if (connector.connect("10.5.136.59", 10023))
-        {
-            connector.run();
+        OSCConnect::Connected_State status = connector.connect();
+        if (status.X32) {
+            connector.open();
         }
 
         // MAKE_BUSY();

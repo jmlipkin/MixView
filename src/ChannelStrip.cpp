@@ -56,6 +56,7 @@ void InputChannelStrip::update_parameter(juce::OSCMessage& message) {
             return;
         }
         if (address.compare(dca_assignments.ap.toString()) == 0) {
+            DBG("DCA assignment change");
             set_dca_assignments(message[0].getInt32());
             DBG(id << " DCA message: " << get_dca_assignments());
             return;
