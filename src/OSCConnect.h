@@ -6,19 +6,27 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_osc/juce_osc.h>
 // #include <chrono>
-#include "Subscriber.h"
 #include "Receiver.h"
+#include "Subscriber.h"
 
-class OSCConnect : public juce::Component
-{
-public:
+class OSCConnect : public juce::Component {
+   public:
     OSCConnect();
-    ~OSCConnect() override { if (Xip != nullptr) delete Xip; if (this_ip != nullptr) delete this_ip; sender.disconnect(); }
+    ~OSCConnect() override {
+        if (Xip != nullptr) delete Xip;
+        if (this_ip != nullptr) delete this_ip;
+
+        this_socket->shutdown();
+        delete this_socket;
+        this_socket = nullptr;
+    }
 
     // Attempt to connect OSC send/receive to stored IP address/port
     bool connect();
     // Attempt to connect OSC send/receive to specified address/port
     bool connect(juce::String ip, int port);
+
+    void synchronize_with_X32();
 
     void run();
     void close(int timeout_milliseconds);
@@ -33,18 +41,18 @@ public:
     int get_port_x32() const { return PORT_X32; }
     int get_port_tmix() const { return PORT_TMIX; }
 
-private:
+   private:
     int m_timeout;
-    juce::IPAddress *Xip;
-    juce::IPAddress *this_ip;
+    juce::IPAddress* Xip;
+    juce::IPAddress* this_ip;
 
     int PORT_X32 = 10023;
     int PORT_TMIX = 32000;
     int this_port = 12345;
 
-    juce::DatagramSocket this_socket;
+    juce::DatagramSocket* this_socket;
 
-public:
+   public:
     // juce::OSCSender sender;
     Subscriber sender;
     Receiver receiver;

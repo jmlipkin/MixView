@@ -36,6 +36,7 @@ private:
 
 public:
     Subscriber() : juce::Thread("Subscriber") {}
+    ~Subscriber() override { disconnect(); }
 
     void get_info_X32() { this->send(msg_x32_getinfo); }
 

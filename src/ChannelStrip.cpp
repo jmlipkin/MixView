@@ -56,7 +56,8 @@ void InputChannelStrip::update_parameter(juce::OSCMessage& message) {
             return;
         }
         if (address.compare(dca_assignments.ap.toString()) == 0) {
-            DBG("WARNING: DCA assigments not yet implemented.");
+            set_dca_assignments(message[0].getInt32());
+            DBG(id << " DCA message: " << get_dca_assignments());
             return;
         }
         DBG("Unknown address pattern from OSC message. Detected address: [" << address << "] (DBG printed from " << __FILE__ << " : " << __LINE__ << ")");
