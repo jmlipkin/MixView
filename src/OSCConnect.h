@@ -77,5 +77,7 @@ class OSCConnect : public juce::Component {
 
     Connected_State get_connection_status() { return state; }
 
+    MessageProcessor* get_message_processor() { return receiver.get_message_processor(); }
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
 };

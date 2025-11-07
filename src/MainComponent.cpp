@@ -8,7 +8,16 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    setSize (590, 410);
+    setSize (int(590*1.75), int(410*1.75));
+    getLookAndFeel().setDefaultSansSerifTypefaceName("Helvetica Neue");
+
+    mp = connector.get_message_processor();
+    strip_dca1 = std::make_unique<ScribbleStrip> (mp->get_dca(0));
+    state_dca1 = std::make_unique<State>(mp->get_dca(0));
+    fader_dca1 = std::make_unique<Fader>(mp->get_dca(1));
+
+    strip_ch2 = std::make_unique<ScribbleStrip> (mp->get_in_ch(1));
+    state_ch2 = std::make_unique<State>(mp->get_in_ch(1));
 
     DBG("Program started" << DBG_STR);
 
@@ -31,13 +40,25 @@ MainComponent::MainComponent()
     addAndMakeVisible(starter);
 
     connector.set_timeout(1000);
+
+    addAndMakeVisible(strip_dca1.get());
+    strip_dca1->setBounds(100, 200, 100, 50);
+    addAndMakeVisible(state_dca1.get());
+    state_dca1->setBounds(100, 275, 100, 25);
+    addAndMakeVisible(fader_dca1.get());
+    fader_dca1->setBounds(100, 325, 100, 300);
+
+    addAndMakeVisible(strip_ch2.get());
+    strip_ch2->setBounds(300, 400, 100, 50);
+    addAndMakeVisible(state_ch2.get());
+    state_ch2->setBounds(300, 475, 100, 25);
 }
 
 //==============================================================================
 void MainComponent::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll (juce::Colour(0xFF00141B));
 
     g.setFont (juce::FontOptions (16.0f));
     g.setColour (juce::Colours::white);

@@ -93,19 +93,25 @@ class ChannelStrip {
         float get_value() { return value; }
     } Fader;
 
+   public:
+    juce::ChangeBroadcaster scribble_broadcaster;
+    juce::ChangeBroadcaster state_broadcaster;
+    juce::ChangeBroadcaster fader_broadcaster;
+
    protected:
+    juce::String id;
     Number number;
     Name name;
+
     Color color;
     OnState state;
     Fader fader;
-
-    juce::String id;
 
    public:
     ChannelStrip() {}
 
     void set_id(juce::String channel_id) { id = channel_id; }
+    juce::String get_id() { return id; }
     virtual void set_num_and_ap(size_t idx);
 
     virtual void update_parameter(juce::OSCMessage& message);
@@ -123,8 +129,9 @@ class ChannelStrip {
     COLORS get_color_value() { return color.value; }
     juce::String get_color_string() { return color.toString(); }
 
-    void set_state_value(int val) { state.value = static_cast<STATE> (val); }
+    void set_state_value(int val) { state.value = static_cast<STATE>(val); }
     juce::String get_state_string() { return state.value ? "on" : "off"; }
+    bool get_state() { return state.value; }
 
     void print_string_with_ch_id(juce::OSCMessage& message);
 
@@ -138,6 +145,9 @@ class InputChannelStrip : public ChannelStrip {
         juce::OSCAddress ap = "/grp/dca";
         std::bitset<32> assignments;
     } DCA_Assign;
+
+   public:
+    juce::ChangeBroadcaster dca_broadcaster;
 
    private:
     DCA_Assign dca_assignments;

@@ -72,6 +72,12 @@ class MessageProcessor : public juce::Thread {
         stop();
     }
 
+    InputChannelStrip* get_in_ch(int idx) { return &channels[idx]; }
+    InputChannelStrip* get_auxin(int idx) { return &auxins[idx]; }
+    InputChannelStrip* get_bus(int idx) { return &buses[idx]; }
+    ChannelStrip* get_mtx(int idx) { return &matrices[idx]; }
+    DCAChannelStrip* get_dca(int idx) { return &dcas[idx]; }
+
     juce::String arg_to_str(const juce::OSCArgument& arg) {
         switch (arg.getType()) {
             case 'f':

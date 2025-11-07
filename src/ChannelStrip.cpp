@@ -8,21 +8,25 @@ void ChannelStrip::update_parameter(juce::OSCMessage& message) {
         if (address.compare(name.ap.toString()) == 0) {
             set_name(message[0].getString());
             DBG(id << " name set to " << get_name());
+            scribble_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(color.ap.toString()) == 0) {
             set_color_value(message[0].getInt32());
             DBG(id << " color set to " << color.toString());
+            scribble_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(state.ap.toString()) == 0) {
             set_state_value(message[0].getInt32());
             DBG(id << " on state set to " << get_state_string());
+            state_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(fader.ap.toString()) == 0) {
             set_fader_value(message[0].getFloat32());
             DBG(id << " fader set to " << get_fader_value());
+            fader_broadcaster.sendChangeMessage();
             return;
         }
         DBG("Unknown address pattern from OSC message. Detected address: [" << address << "] (DBG printed from " << __FILE__ << " : " << __LINE__ << ")");
@@ -38,27 +42,32 @@ void InputChannelStrip::update_parameter(juce::OSCMessage& message) {
         if (address.compare(name.ap.toString()) == 0) {
             set_name(message[0].getString());
             DBG(id << " name set to " << get_name());
+            scribble_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(color.ap.toString()) == 0) {
             set_color_value(message[0].getInt32());
             DBG(id << " color set to " << color.toString());
+            scribble_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(state.ap.toString()) == 0) {
             set_state_value(message[0].getInt32());
             DBG(id << " on state set to " << get_state_string());
+            state_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(fader.ap.toString()) == 0) {
             set_fader_value(message[0].getFloat32());
             DBG(id << " fader set to " << get_fader_value());
+            fader_broadcaster.sendChangeMessage();
             return;
         }
         if (address.compare(dca_assignments.ap.toString()) == 0) {
             DBG("DCA assignment change");
             set_dca_assignments(message[0].getInt32());
             DBG(id << " DCA message: " << get_dca_assignments());
+            dca_broadcaster.sendChangeMessage();
             return;
         }
         DBG("Unknown address pattern from OSC message. Detected address: [" << address << "] (DBG printed from " << __FILE__ << " : " << __LINE__ << ")");

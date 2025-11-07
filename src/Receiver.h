@@ -29,5 +29,7 @@ class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<ju
 
     void oscMessageReceived(const juce::OSCMessage& message) override;
 
+    MessageProcessor* get_message_processor() { return &mp; }
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Receiver)
 };
