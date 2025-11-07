@@ -17,7 +17,7 @@ class State : public juce::Component, public juce::ChangeListener {
          mute_color = channel->get_state();
      }
 
-     ~State() {
+     ~State() override {
          channel->state_broadcaster.removeChangeListener(this);
      }
 

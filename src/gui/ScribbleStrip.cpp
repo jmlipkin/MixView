@@ -6,9 +6,11 @@ ScribbleStrip::ScribbleStrip(ChannelStrip* ch) : channel(ch) {
     channel->scribble_broadcaster.addChangeListener(this);
 
     channel_id.setText(channel->get_id(), juce::dontSendNotification);
-    channel_id.setBounds(20, 5, 80, 20);
+    channel_id.setBounds(0, 5, 100, 20);
+    channel_id.setJustificationType(juce::Justification::horizontallyCentred);
     channel_name.setText(channel->get_name(), juce::dontSendNotification);
-    channel_name.setBounds(20, 25, 80, 20);
+    channel_name.setBounds(0, 25, 100, 20);
+    channel_name.setJustificationType(juce::Justification::horizontallyCentred);
 
     addAndMakeVisible(channel_id);
     addAndMakeVisible(channel_name);

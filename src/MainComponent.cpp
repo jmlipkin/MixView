@@ -3,7 +3,7 @@
 #include "Macros.h"
 #include "OSCConnect.h"
 
-#define IP_ADDRESS "127.0.0.1"
+#define IP_ADDRESS "10.5.227.58"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -14,7 +14,7 @@ MainComponent::MainComponent()
     mp = connector.get_message_processor();
     strip_dca1 = std::make_unique<ScribbleStrip> (mp->get_dca(0));
     state_dca1 = std::make_unique<State>(mp->get_dca(0));
-    fader_dca1 = std::make_unique<Fader>(mp->get_dca(1));
+    fader_dca1 = std::make_unique<Fader>(mp->get_dca(0));
 
     strip_ch2 = std::make_unique<ScribbleStrip> (mp->get_in_ch(1));
     state_ch2 = std::make_unique<State>(mp->get_in_ch(1));

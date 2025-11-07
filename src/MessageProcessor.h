@@ -162,7 +162,7 @@ class MessageProcessor : public juce::Thread {
                 break;
             }
             case ChannelStrip::CH_TYPE::INVALID: {
-                print_unprocessed_string(message);
+                // print_unprocessed_string(message);
                 break;
             }
             default:

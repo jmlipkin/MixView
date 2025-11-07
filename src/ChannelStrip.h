@@ -78,6 +78,7 @@ class ChannelStrip {
     typedef struct Fader {
         juce::OSCAddress ap = "/mix/fader";
         float value;
+        juce::String label;
         const std::map<float, float> faderMap;
 
         float map_to_float(const std::map<float, float>& map, float key) {
@@ -88,9 +89,10 @@ class ChannelStrip {
                 return map.rbegin()->second;
             return 0.0f;
         }
-        void set_value(float val) { this->value = map_to_float(get_fader_map(), val); }
+        void set_label(float val) { this->label = juce::String(map_to_float(get_fader_map(), val)); }
 
         float get_value() { return value; }
+        juce::String get_label() { return label; }
     } Fader;
 
    public:
@@ -119,8 +121,10 @@ class ChannelStrip {
     juce::OSCAddress get_num_ap() const { return number.ap; }
     size_t get_num_index() const { return number.index; }
 
-    void set_fader_value(float val) { fader.set_value(val); }
+    void set_fader_value(float val) { fader.value = val; }
+    void set_fader_label(float val) { fader.set_label(val); }
     float get_fader_value() { return fader.get_value(); }
+    juce::String get_fader_label() { return fader.get_label(); }
 
     void set_name(juce::String val) { name.value = val; }
     juce::String get_name() { return name.value; }

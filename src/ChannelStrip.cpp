@@ -24,6 +24,7 @@ void ChannelStrip::update_parameter(juce::OSCMessage& message) {
             return;
         }
         if (address.compare(fader.ap.toString()) == 0) {
+            set_fader_label(message[0].getFloat32());
             set_fader_value(message[0].getFloat32());
             DBG(id << " fader set to " << get_fader_value());
             fader_broadcaster.sendChangeMessage();
@@ -58,6 +59,7 @@ void InputChannelStrip::update_parameter(juce::OSCMessage& message) {
             return;
         }
         if (address.compare(fader.ap.toString()) == 0) {
+            set_fader_label(message[0].getFloat32());
             set_fader_value(message[0].getFloat32());
             DBG(id << " fader set to " << get_fader_value());
             fader_broadcaster.sendChangeMessage();
