@@ -6,10 +6,10 @@ ScribbleStrip::ScribbleStrip(ChannelStrip* ch) : channel(ch) {
     channel->scribble_broadcaster.addChangeListener(this);
 
     channel_id.setText(channel->get_id(), juce::dontSendNotification);
-    channel_id.setBounds(0, 5, 100, 20);
+    channel_id.setBounds(0, 5, getWidth(), 20);
     channel_id.setJustificationType(juce::Justification::horizontallyCentred);
     channel_name.setText(channel->get_name(), juce::dontSendNotification);
-    channel_name.setBounds(0, 25, 100, 20);
+    channel_name.setBounds(0, 25, getWidth(), 20);
     channel_name.setJustificationType(juce::Justification::horizontallyCentred);
 
     addAndMakeVisible(channel_id);
@@ -27,6 +27,11 @@ void ScribbleStrip::paint(juce::Graphics& g) {
     g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), corner_radius);
     g.setColour(SCRIBBLE_BKG[channel_color]);
     g.fillRoundedRectangle(line_width, line_width, getWidth() - 2 * line_width, getHeight() - 2 * line_width, corner_radius - line_width);
+}
+
+void ScribbleStrip::resized() {
+    channel_id.setBounds(0, 5, getWidth(), 20);
+    channel_name.setBounds(0, 25, getWidth(), 20);
 }
 
 void ScribbleStrip::changeListenerCallback(juce::ChangeBroadcaster* source) {

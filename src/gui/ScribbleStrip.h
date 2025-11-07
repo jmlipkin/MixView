@@ -54,5 +54,6 @@ class ScribbleStrip : public juce::Component, public juce::ChangeListener {
      ScribbleStrip(ChannelStrip* ch);
      ~ScribbleStrip() override;
      void paint(juce::Graphics& g) override;
+     void resized() override;
      void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 };

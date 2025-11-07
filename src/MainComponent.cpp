@@ -4,6 +4,7 @@
 #include "OSCConnect.h"
 
 #define IP_ADDRESS "10.5.227.58"
+#define CHANNEL_WIDTH 90
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -42,16 +43,16 @@ MainComponent::MainComponent()
     connector.set_timeout(1000);
 
     addAndMakeVisible(strip_dca1.get());
-    strip_dca1->setBounds(100, 200, 100, 50);
+    strip_dca1->setBounds(100, 100, CHANNEL_WIDTH, 50);
     addAndMakeVisible(state_dca1.get());
-    state_dca1->setBounds(100, 275, 100, 25);
+    state_dca1->setBounds(100, 175, CHANNEL_WIDTH, 25);
     addAndMakeVisible(fader_dca1.get());
-    fader_dca1->setBounds(100, 325, 100, 300);
+    fader_dca1->setBounds(100, 225, CHANNEL_WIDTH, 400);
 
     addAndMakeVisible(strip_ch2.get());
-    strip_ch2->setBounds(300, 400, 100, 50);
+    strip_ch2->setBounds(300, 400, CHANNEL_WIDTH, 50);
     addAndMakeVisible(state_ch2.get());
-    state_ch2->setBounds(300, 475, 100, 25);
+    state_ch2->setBounds(300, 475, CHANNEL_WIDTH, 25);
 }
 
 //==============================================================================
