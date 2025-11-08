@@ -35,6 +35,7 @@ class ChannelStrip {
         AUX_IN,
         BUS,
         MATRIX,
+        MAIN_ST,
         DCA,
         INVALID
     } CH_TYPE;
@@ -61,13 +62,13 @@ class ChannelStrip {
 
     typedef struct Name {
         juce::OSCAddress ap = "/config/name";
-        juce::String value;
+        juce::String value = "";
 
     } Name;
 
     typedef struct OnState {
         juce::OSCAddress ap = "/mix/on";
-        STATE value;
+        STATE value = CH_OFF;
     } OnState;
 
     typedef struct Number {
@@ -77,8 +78,8 @@ class ChannelStrip {
 
     typedef struct Fader {
         juce::OSCAddress ap = "/mix/fader";
-        float value;
-        juce::String label;
+        float value = 0.0;
+        juce::String label = "-90";
         const std::map<float, float> faderMap;
 
         float map_to_float(const std::map<float, float>& map, float key) {
@@ -111,6 +112,7 @@ class ChannelStrip {
 
    public:
     ChannelStrip() {}
+    ~ChannelStrip() {}
 
     void set_id(juce::String channel_id) { id = channel_id; }
     juce::String get_id() { return id; }

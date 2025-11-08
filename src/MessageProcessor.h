@@ -20,6 +20,7 @@ class MessageProcessor : public juce::Thread {
     InputChannelStrip* auxins;
     InputChannelStrip* buses;
     ChannelStrip* matrices;
+    ChannelStrip* main_st;
     DCAChannelStrip* dcas;
 
     std::deque<juce::OSCMessage> msg_buffer;
@@ -33,6 +34,7 @@ class MessageProcessor : public juce::Thread {
         auxins = new InputChannelStrip[NUM_AUXINS];
         buses = new InputChannelStrip[NUM_BUSES];
         matrices = new ChannelStrip[NUM_MATRICES];
+        main_st = new ChannelStrip;
         dcas = new DCAChannelStrip[NUM_DCAS];
 
         for (size_t i = 0; i < NUM_IN_CH; i++) {
@@ -51,6 +53,7 @@ class MessageProcessor : public juce::Thread {
             matrices[i].set_id("MTX " + juce::String(i + 1));
             matrices[i].set_num_and_ap(i);
         }
+        main_st->set_id("LR");
         for (size_t i = 0; i < NUM_DCAS; i++) {
             dcas[i].set_id("DCA " + juce::String(i + 1));
             dcas[i].set_num_and_ap(i);
@@ -62,12 +65,14 @@ class MessageProcessor : public juce::Thread {
         delete[] buses;
         delete[] matrices;
         delete[] dcas;
+        delete main_st;
 
         channels = nullptr;
         auxins = nullptr;
         buses = nullptr;
         matrices = nullptr;
         dcas = nullptr;
+        main_st = nullptr;
 
         stop();
     }
@@ -76,6 +81,7 @@ class MessageProcessor : public juce::Thread {
     InputChannelStrip* get_auxin(int idx) { return &auxins[idx]; }
     InputChannelStrip* get_bus(int idx) { return &buses[idx]; }
     ChannelStrip* get_mtx(int idx) { return &matrices[idx]; }
+    ChannelStrip* get_main_st() { return main_st; }
     DCAChannelStrip* get_dca(int idx) { return &dcas[idx]; }
 
     juce::String arg_to_str(const juce::OSCArgument& arg) {
@@ -161,6 +167,10 @@ class MessageProcessor : public juce::Thread {
                 matrices[idx].update_parameter(message);
                 break;
             }
+            case ChannelStrip::CH_TYPE::MAIN_ST: {
+                main_st->update_parameter(message);
+                break;
+            }
             case ChannelStrip::CH_TYPE::INVALID: {
                 // print_unprocessed_string(message);
                 break;
@@ -233,6 +243,9 @@ class MessageProcessor : public juce::Thread {
                         return i;
                     }
                 }
+            }
+            case ChannelStrip::CH_TYPE::MAIN_ST: {
+                break;
             }
             case ChannelStrip::CH_TYPE::INVALID:
                 return 100;

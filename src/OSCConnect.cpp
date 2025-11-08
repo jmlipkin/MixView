@@ -93,6 +93,11 @@ void OSCConnect::synchronize_with_X32() {
         sender_X32.send(juce::OSCMessage("/mtx/0" + juce::String(ch) + "/mix/fader"));
         juce::Thread::sleep(1);
     }
+
+    sender_X32.send(juce::OSCMessage("/main/st/config/name"));
+    sender_X32.send(juce::OSCMessage("/main/st/config/color"));
+    sender_X32.send(juce::OSCMessage("/main/st/mix/on"));
+    sender_X32.send(juce::OSCMessage("/main/st/mix/fader"));
 }
 
 bool OSCConnect::connect_to_tmix() {

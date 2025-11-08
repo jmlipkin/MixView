@@ -13,12 +13,15 @@ MainComponent::MainComponent()
     getLookAndFeel().setDefaultSansSerifTypefaceName("Helvetica Neue");
 
     mp = connector.get_message_processor();
-    strip_dca1 = std::make_unique<ScribbleStrip> (mp->get_dca(0));
-    state_dca1 = std::make_unique<State>(mp->get_dca(0));
-    fader_dca1 = std::make_unique<Fader>(mp->get_dca(0));
-
-    strip_ch2 = std::make_unique<ScribbleStrip> (mp->get_in_ch(1));
-    state_ch2 = std::make_unique<State>(mp->get_in_ch(1));
+    for (size_t i = 0; i < 8; i++)
+    {
+        dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(i)));
+        addAndMakeVisible(dca_strips[i].get());
+        dca_strips[i]->setBounds(i * (CHANNEL_WIDTH + 20) + 20, getHeight() - 500 - 20, CHANNEL_WIDTH, 500);
+    }
+    lr_strip = std::make_unique<StripView>(mp->get_main_st());
+    addAndMakeVisible(lr_strip.get());
+    lr_strip->setBounds(getWidth() - 30 - CHANNEL_WIDTH, getHeight() - 500 - 20, CHANNEL_WIDTH, 500);
 
     DBG("Program started" << DBG_STR);
 
@@ -41,18 +44,6 @@ MainComponent::MainComponent()
     addAndMakeVisible(starter);
 
     connector.set_timeout(1000);
-
-    addAndMakeVisible(strip_dca1.get());
-    strip_dca1->setBounds(100, 100, CHANNEL_WIDTH, 50);
-    addAndMakeVisible(state_dca1.get());
-    state_dca1->setBounds(100, 175, CHANNEL_WIDTH, 25);
-    addAndMakeVisible(fader_dca1.get());
-    fader_dca1->setBounds(100, 225, CHANNEL_WIDTH, 400);
-
-    addAndMakeVisible(strip_ch2.get());
-    strip_ch2->setBounds(300, 400, CHANNEL_WIDTH, 50);
-    addAndMakeVisible(state_ch2.get());
-    state_ch2->setBounds(300, 475, CHANNEL_WIDTH, 25);
 }
 
 //==============================================================================

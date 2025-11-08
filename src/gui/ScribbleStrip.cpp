@@ -31,7 +31,7 @@ void ScribbleStrip::paint(juce::Graphics& g) {
 
 void ScribbleStrip::resized() {
     channel_id.setBounds(0, 5, getWidth(), 20);
-    channel_name.setBounds(0, 25, getWidth(), 20);
+    channel_name.setBounds(0,35, getWidth(), 20);
 }
 
 void ScribbleStrip::changeListenerCallback(juce::ChangeBroadcaster* source) {

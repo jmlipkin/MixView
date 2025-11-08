@@ -15,6 +15,9 @@ class FaderBkg : public juce::Component {
     void paint(juce::Graphics& g) override {
         g.setColour(C_FADER_BKG);
         g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 4);
+        // g.setColour(juce::Colour(0xFF7D7C77));
+        // g.fillRoundedRectangle(0, 0, getWidth(), 2, 2);
+        // g.fillRoundedRectangle(0, getHeight() - 2, getWidth(), 2, 2);
 
         int cap_x_pos = (getWidth() - cap_width) / 2;
 
