@@ -23,6 +23,10 @@ MainComponent::MainComponent()
     addAndMakeVisible(lr_strip.get());
     lr_strip->setBounds(getWidth() - 30 - CHANNEL_WIDTH, getHeight() - 500 - 20, CHANNEL_WIDTH, 500);
 
+    tmix = std::make_unique<TMixView>(mp->get_tmix());
+    addAndMakeVisible(tmix.get());
+    tmix->setBounds(getWidth() / 3, 100, getWidth() / 3, 40);
+
     DBG("Program started" << DBG_STR);
 
     connector.set_ip_this(IP_ADDRESS);

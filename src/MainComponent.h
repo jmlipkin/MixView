@@ -2,11 +2,9 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 #include "OSCConnect.h"
-#include "gui/ScribbleStrip.h"
-#include "gui/State.h"
-#include "gui/Fader.h"
 
 #include "gui/StripView.h"
+#include "gui/TMixView.h"
 // CMake builds don't use an AppConfig.h, so it's safe to include juce module headers
 // directly. If you need to remain compatible with Projucer-generated builds, and
 // have called `juce_generate_juce_header(<thisTarget>)` in your CMakeLists.txt,
@@ -43,6 +41,7 @@ private:
 
     std::vector<std::unique_ptr<StripView>> dca_strips;
     std::unique_ptr<StripView> lr_strip;
+    std::unique_ptr<TMixView> tmix;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

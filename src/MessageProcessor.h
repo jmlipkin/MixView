@@ -7,6 +7,7 @@
 #include <deque>
 
 #include "ChannelStrip.h"
+#include "TMixProcessor.h"
 
 class MessageProcessor : public juce::Thread {
    private:
@@ -22,6 +23,7 @@ class MessageProcessor : public juce::Thread {
     ChannelStrip* matrices;
     ChannelStrip* main_st;
     DCAChannelStrip* dcas;
+    TMixProcessor* tmix;
 
     std::deque<juce::OSCMessage> msg_buffer;
 
@@ -36,6 +38,7 @@ class MessageProcessor : public juce::Thread {
         matrices = new ChannelStrip[NUM_MATRICES];
         main_st = new ChannelStrip;
         dcas = new DCAChannelStrip[NUM_DCAS];
+        tmix = new TMixProcessor;
 
         for (size_t i = 0; i < NUM_IN_CH; i++) {
             channels[i].set_id("CH " + juce::String(i + 1));
@@ -66,6 +69,7 @@ class MessageProcessor : public juce::Thread {
         delete[] matrices;
         delete[] dcas;
         delete main_st;
+        delete tmix;
 
         channels = nullptr;
         auxins = nullptr;
@@ -73,6 +77,7 @@ class MessageProcessor : public juce::Thread {
         matrices = nullptr;
         dcas = nullptr;
         main_st = nullptr;
+        tmix = nullptr;
 
         stop();
     }
@@ -83,6 +88,7 @@ class MessageProcessor : public juce::Thread {
     ChannelStrip* get_mtx(int idx) { return &matrices[idx]; }
     ChannelStrip* get_main_st() { return main_st; }
     DCAChannelStrip* get_dca(int idx) { return &dcas[idx]; }
+    TMixProcessor* get_tmix() { return tmix; }
 
     juce::String arg_to_str(const juce::OSCArgument& arg) {
         switch (arg.getType()) {
@@ -172,7 +178,12 @@ class MessageProcessor : public juce::Thread {
                 break;
             }
             case ChannelStrip::CH_TYPE::INVALID: {
-                // print_unprocessed_string(message);
+                if(tmix->is_type_tmix(message))
+                {
+                    tmix->process_message(message);
+                    break;
+                }
+                print_unprocessed_string(message);
                 break;
             }
             default:
