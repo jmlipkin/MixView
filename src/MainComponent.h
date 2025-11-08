@@ -5,6 +5,7 @@
 
 #include "gui/StripView.h"
 #include "gui/TMixView.h"
+#include "gui/InfoBar.h"
 // CMake builds don't use an AppConfig.h, so it's safe to include juce module headers
 // directly. If you need to remain compatible with Projucer-generated builds, and
 // have called `juce_generate_juce_header(<thisTarget>)` in your CMakeLists.txt,
@@ -26,22 +27,16 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void startButtonClicked();
-
 private:
     //==============================================================================
     // Your private member variables go here...
     OSCConnect connector;
     MessageProcessor* mp;
 
-    juce::Label ip_str_X32;
-    juce::Label ip_str_tmix;
-    juce::Label ip_str_this;
-    juce::TextButton starter;
-
     std::vector<std::unique_ptr<StripView>> dca_strips;
     std::unique_ptr<StripView> lr_strip;
     std::unique_ptr<TMixView> tmix;
+    std::unique_ptr<InfoBar> menu;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

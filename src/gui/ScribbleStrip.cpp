@@ -10,6 +10,7 @@ ScribbleStrip::ScribbleStrip(ChannelStrip* ch) : channel(ch) {
     channel_id.setJustificationType(juce::Justification::horizontallyCentred);
     channel_name.setText(channel->get_name(), juce::dontSendNotification);
     channel_name.setBounds(0, 25, getWidth(), 20);
+    channel_name.setFont(juce::FontOptions().withHeight(19));
     channel_name.setJustificationType(juce::Justification::horizontallyCentred);
 
     addAndMakeVisible(channel_id);
