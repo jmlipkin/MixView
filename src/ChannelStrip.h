@@ -112,7 +112,7 @@ class ChannelStrip {
 
    public:
     ChannelStrip() {}
-    ~ChannelStrip() {}
+    virtual ~ChannelStrip() {}
 
     void set_id(juce::String channel_id) { id = channel_id; }
     juce::String get_id() { return id; }
@@ -161,7 +161,8 @@ class InputChannelStrip : public ChannelStrip {
    public:
     InputChannelStrip() {}
 
-    void set_dca_assignments(int val) { dca_assignments.assignments = val; }
+    // TODO: Fix DCA storing
+    void set_dca_assignments(int val) { dca_assignments.assignments = (unsigned long long)val; }
     juce::String get_dca_assignments() { return juce::String(dca_assignments.assignments.to_string()); }
 
     void update_parameter(juce::OSCMessage& message) override;

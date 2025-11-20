@@ -57,7 +57,7 @@ class FaderCap : public juce::Component {
                 g.setColour(C_CAP_GRIP);
                 continue;
             }
-            g.fillRoundedRectangle(h_offset, dist * i, line_width, line_height + 0.5, line_corner_radius);
+            g.fillRoundedRectangle(h_offset, dist * i, line_width, line_height + 0.5f, line_corner_radius);
         }
     }
 };

@@ -3,7 +3,7 @@
 #include "Macros.h"
 #include "OSCConnect.h"
 
-#define IP_ADDRESS "10.5.227.58"
+#define IP_ADDRESS "10.5.144.35"
 #define CHANNEL_WIDTH 90
 
 //==============================================================================
@@ -15,9 +15,9 @@ MainComponent::MainComponent()
     mp = connector.get_message_processor();
     for (size_t i = 0; i < 8; i++)
     {
-        dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(i)));
+        dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(int(i))));
         addAndMakeVisible(dca_strips[i].get());
-        dca_strips[i]->setBounds(i * (CHANNEL_WIDTH + 20) + 20, getHeight() - 550 - 20, CHANNEL_WIDTH, 550);
+        dca_strips[i]->setBounds(int(i) * (CHANNEL_WIDTH + 20) + 20, getHeight() - 550 - 20, CHANNEL_WIDTH, 550);
     }
     lr_strip = std::make_unique<StripView>(mp->get_main_st());
     addAndMakeVisible(lr_strip.get());

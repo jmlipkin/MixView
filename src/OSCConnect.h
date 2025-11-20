@@ -5,7 +5,7 @@
 #include <juce_events/juce_events.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_osc/juce_osc.h>
-// #include <chrono>
+
 #include "Receiver.h"
 #include "Subscriber.h"
 
@@ -19,31 +19,31 @@ class OSCConnect : public juce::Component {
         CONNECTED
     };
     struct Connected_State {
-        bool X32 = DISCONNECTED;
-        bool TMix = DISCONNECTED;
-        bool receiver = DISCONNECTED;
+        bool X32{DISCONNECTED};
+        bool TMix{DISCONNECTED};
+        bool receiver{DISCONNECTED};
     };
 
-   private : Subscriber sender_X32;
+   private:
+    Subscriber sender_X32;
     Subscriber sender_tmix;
     Receiver receiver;
 
     juce::DatagramSocket* socket_this;
     Connected_State state;
-    
+
     juce::IPAddress* ip_X32;
     juce::IPAddress* ip_tmix;
     juce::IPAddress* ip_this;
 
-    static const int PORT_X32 = 10023;
-    static const int PORT_TMIX = 32000;
+    static const int PORT_X32{10023};
+    static const int PORT_TMIX{32000};
 
-    int port_this = 12345;
-    
+    int port_this{12345};
+
     int m_timeout;
 
    public:
-
     OSCConnect();
     ~OSCConnect() override;
 
@@ -80,4 +80,47 @@ class OSCConnect : public juce::Component {
     MessageProcessor* get_message_processor() { return receiver.get_message_processor(); }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
+};
+
+class IPAddressBox : public juce::Label {
+   public:
+    IPAddressBox() {
+        setEditable(true);
+        onTextChange = nullptr;  // We don't validate on every keystroke
+    }
+
+    // Sets a new value programmatically and stores it as valid
+    void setIPAddress(const juce::String& newAddress) {
+        storedString = newAddress;
+        setText(newAddress, juce::dontSendNotification);
+    }
+
+    juce::String getIPAddress() const {
+        return storedString;
+    }
+
+    bool isChanged() { return m_isChanged; }
+    void set_isChanged(bool new_state) { m_isChanged = new_state; }
+
+   protected:
+
+    void textEditorReturnKeyPressed(juce::TextEditor& editor) override { tryCommit(); }
+
+   private:
+    static const int MIN_NUM_CHARS_IPV4{7};
+    static const int MAX_NUM_CHARS_IPV4{15};
+    static inline const juce::String ALLOWED_CHARS{"1234567890."};
+    bool m_isChanged;
+    // Your future IPv4 validator — you will implement this
+    juce::String filter_text(const juce::String& str);
+    const juce::String& get_allowed_chars();
+
+    void tryCommit() {
+        auto text = filter_text(getText(true));
+
+        storedString = text;
+        setText(storedString, juce::dontSendNotification);
+    }
+
+    juce::String storedString;
 };
