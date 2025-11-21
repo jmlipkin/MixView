@@ -27,7 +27,12 @@ private:
     void resub_to_x32() { this->send(msg_x32_resub); }
     void resub_to_tmix() { this->send(msg_tmix_resub); }
 
-    void run() override {     
+    void run() override {  
+        if(m_port == PORT_X32)
+                this->send(msg_x32_getinfo);
+            else if(m_port == PORT_TMIX)
+                this->send(msg_tmix_resub);
+
         while (!threadShouldExit())
         {
             if(m_port == PORT_X32)

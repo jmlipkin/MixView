@@ -30,8 +30,8 @@ public:
 private:
     //==============================================================================
     // Your private member variables go here...
+    std::unique_ptr<MessageProcessor> mp;
     OSCConnect connector;
-    MessageProcessor* mp;
 
     std::vector<std::unique_ptr<StripView>> dca_strips;
     std::unique_ptr<StripView> lr_strip;

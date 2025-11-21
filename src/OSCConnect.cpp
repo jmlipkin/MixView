@@ -2,9 +2,7 @@
 
 #include <juce_core/juce_core.h>
 
-#define IP_X32 "127.0.0.1"
-
-OSCConnect::OSCConnect() : m_timeout(0) {
+OSCConnect::OSCConnect(MessageProcessor& processor) : mp(processor), m_timeout(0) {
     sender_tmix.set_port(PORT_TMIX);
     sender_X32.set_port(PORT_X32);
 
@@ -32,16 +30,22 @@ OSCConnect::~OSCConnect() {
 }
 
 void OSCConnect::open() {
-    sender_X32.startThread();
-    sender_tmix.startThread();
     receiver.open();
+    DBG("Receiver opened" << DBG_STR);
+    sender_X32.startThread();
+    DBG("X32 Send thread started" << DBG_STR);
+    sender_tmix.startThread();
+    DBG("TMix Send thread started" << DBG_STR);
     synchronize_with_X32();
 }
 
 void OSCConnect::close(int timeout_milliseconds) {
     sender_X32.stopThread(timeout_milliseconds);
+    DBG("X32 Send thread stopped" << DBG_STR);
     sender_tmix.stopThread(timeout_milliseconds);
+    DBG("TMix Send thread stopped" << DBG_STR);
     receiver.close();
+    DBG("Receiver closed" << DBG_STR);
 
     socket_this->shutdown();
     delete socket_this;
@@ -98,12 +102,14 @@ void OSCConnect::synchronize_with_X32() {
     sender_X32.send(juce::OSCMessage("/main/st/config/color"));
     sender_X32.send(juce::OSCMessage("/main/st/mix/on"));
     sender_X32.send(juce::OSCMessage("/main/st/mix/fader"));
+
+    DBG("X32 Synchronization complete" << DBG_STR);
 }
 
 bool OSCConnect::connect_to_tmix() {
     bool success = sender_tmix.connectToSocket(*socket_this, ip_tmix->toString(), PORT_TMIX);
     if (success) {
-        DBG("Connected successfully to TheatreMix");
+        DBG("Connected successfully to TheatreMix" << DBG_STR);
     }
     return success;
 }
@@ -112,16 +118,17 @@ OSCConnect::Connected_State OSCConnect::connect() {
     bool success = socket_this->bindToPort(port_this, ip_this->toString());
     if (success) {
         state.X32 = sender_X32.connectToSocket(*socket_this, ip_X32->toString(), PORT_X32);
+        DBG("Create X32 socket send: " << (state.X32 ? "success" : "fail") << DBG_STR);
         success &= state.X32;
     }
     if (success) {
         state.receiver = receiver.connectToSocket(*socket_this);
         success &= state.receiver;
+        DBG("Create X32 socket receive: " << (state.receiver ? "success" : "fail") << DBG_STR);
         receiver.setSocket(socket_this);
     }
     if (success) {
-        DBG("Connected successfully to X32");
-        synchronize_with_X32();
+        DBG("Connected successfully to X32" << DBG_STR);
     }
     state.TMix = connect_to_tmix();
 
@@ -134,6 +141,8 @@ void OSCConnect::set_ip_X32(std::string ip) {
         ip_X32 = nullptr;
     }
     ip_X32 = new juce::IPAddress(ip);
+
+    DBG("Set X32 IP" << DBG_STR);
 }
 
 void OSCConnect::set_ip_tmix(std::string ip) {
@@ -142,6 +151,8 @@ void OSCConnect::set_ip_tmix(std::string ip) {
         ip_tmix = nullptr;
     }
     ip_tmix = new juce::IPAddress(ip);
+
+    DBG("Set TMix IP" << DBG_STR);
 }
 void OSCConnect::set_ip_this(std::string ip) {
     if (ip_this != nullptr) {
@@ -149,6 +160,8 @@ void OSCConnect::set_ip_this(std::string ip) {
         ip_tmix = nullptr;
     }
     ip_this = new juce::IPAddress(ip);
+
+    DBG("Set this IP" << DBG_STR);
 }
 
 juce::String IPAddressBox::filter_text(const juce::String& newInput) {

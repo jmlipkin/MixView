@@ -25,9 +25,11 @@ class OSCConnect : public juce::Component {
     };
 
    private:
+    MessageProcessor& mp;
+
     Subscriber sender_X32;
     Subscriber sender_tmix;
-    Receiver receiver;
+    Receiver receiver{mp};
 
     juce::DatagramSocket* socket_this;
     Connected_State state;
@@ -44,7 +46,7 @@ class OSCConnect : public juce::Component {
     int m_timeout;
 
    public:
-    OSCConnect();
+    OSCConnect(MessageProcessor& processor);
     ~OSCConnect() override;
 
     // Attempt to connect OSC send/receive to stored IP address/port
@@ -76,8 +78,6 @@ class OSCConnect : public juce::Component {
     int get_port_tmix() const { return PORT_TMIX; }
 
     Connected_State get_connection_status() { return state; }
-
-    MessageProcessor* get_message_processor() { return receiver.get_message_processor(); }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
 };

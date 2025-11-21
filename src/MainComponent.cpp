@@ -3,16 +3,15 @@
 #include "Macros.h"
 #include "OSCConnect.h"
 
-#define IP_ADDRESS "10.5.144.35"
+#define DEFAULT_IP_ADDRESS "0.0.0.0"
 #define CHANNEL_WIDTH 90
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() : mp(std::make_unique<MessageProcessor>()), connector(*mp)
 {
     setSize (int(590*1.75), int(410*1.75));
     getLookAndFeel().setDefaultSansSerifTypefaceName("Helvetica Neue");
 
-    mp = connector.get_message_processor();
     for (size_t i = 0; i < 8; i++)
     {
         dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(int(i))));
@@ -27,9 +26,9 @@ MainComponent::MainComponent()
     addAndMakeVisible(tmix.get());
     tmix->setBounds(getWidth() / 3, 80, getWidth() / 3, 40);
 
-    connector.set_ip_this(IP_ADDRESS);
-    connector.set_ip_tmix(IP_ADDRESS);
-    connector.set_ip_X32(IP_ADDRESS);
+    connector.set_ip_this(DEFAULT_IP_ADDRESS);
+    connector.set_ip_tmix(DEFAULT_IP_ADDRESS);
+    connector.set_ip_X32(DEFAULT_IP_ADDRESS);
 
     menu = std::make_unique<InfoBar>(connector);
     addAndMakeVisible(menu.get());

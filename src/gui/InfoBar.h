@@ -66,8 +66,6 @@ class InfoBar : public juce::Component {
         if (ip_str.isChanged()) {
             addr = std::make_unique<juce::IPAddress>(ip_str.getText());
             DBG("IP address changed to " << ip_str.getText());
-            connector.close(-1);
-            connector.open();
         }
     }
 

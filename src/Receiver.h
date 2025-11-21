@@ -11,10 +11,10 @@ class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<ju
    private:
     juce::String arg_to_str(const juce::OSCArgument& arg);
     juce::DatagramSocket* m_socket;
-    MessageProcessor mp;
+    MessageProcessor& mp;
 
    public:
-    Receiver() : mp() {}
+    Receiver(MessageProcessor& processor) : mp(processor) {}
     ~Receiver() override {
         close();
     }
@@ -28,8 +28,6 @@ class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<ju
     }
 
     void oscMessageReceived(const juce::OSCMessage& message) override;
-
-    MessageProcessor* get_message_processor() { return &mp; }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Receiver)
 };
