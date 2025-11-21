@@ -1,39 +1,50 @@
 #include "OSCConnect.h"
 
-OSCConnect::OSCConnect(MessageProcessor& processor, juce::IPAddress& host, juce::IPAddress& console, juce::IPAddress& tmix) : mp(processor), ip_host(host), ip_console(console), ip_tmix(tmix), m_timeout(0) {
+OSCConnect::OSCConnect(MessageProcessor& processor, juce::IPAddress host, juce::IPAddress console, juce::IPAddress tmix) : mp(processor), ip_host(host), ip_console(console), ip_tmix(tmix), m_timeout(0) {
     sender_tmix.set_port(PORT_TMIX);
     sender_X32.set_port(PORT_CONSOLE);
 
-    socket_this = new juce::DatagramSocket();
-    socket_this->setEnablePortReuse(true);
+    socket_console = new juce::DatagramSocket();
+    socket_console->setEnablePortReuse(true);
+    socket_tmix = new juce::DatagramSocket();
 }
 
 OSCConnect::~OSCConnect() {
-    socket_this->shutdown();
+    socket_console->shutdown();
+    socket_tmix->shutdown();
 
-    delete socket_this;
-    socket_this = nullptr;
+    delete socket_console;
+    socket_console = nullptr;
+
+    delete socket_tmix;
+    socket_tmix = nullptr;
 }
 
 void OSCConnect::open() {
-    if (socket_this->getBoundPort() != -1) {
-        receiver.open();
-        DBG("Receiver opened" << DBG_STR);
+    if (socket_console->getBoundPort() != -1) {
         sender_X32.startThread();
         DBG("X32 Send thread started" << DBG_STR);
+        receiver_X32.open();
+        DBG("X32 Receiver opened" << DBG_STR);
+        synchronize_with_X32();
+    }
+    if(socket_tmix->getBoundPort() != -1) {
         sender_tmix.startThread();
         DBG("TMix Send thread started" << DBG_STR);
-        synchronize_with_X32();
+        receiver_tmix.open();
+        DBG("TMix Receiver opened:" << DBG_STR);
     }
 }
 
 void OSCConnect::close(int timeout_milliseconds) {
     sender_X32.stopThread(timeout_milliseconds);
     DBG("X32 Send thread stopped" << DBG_STR);
+    receiver_X32.close();
+    DBG("X32 Receiver closed" << DBG_STR);
     sender_tmix.stopThread(timeout_milliseconds);
     DBG("TMix Send thread stopped" << DBG_STR);
-    receiver.close();
-    DBG("Receiver closed" << DBG_STR);
+    receiver_tmix.close();
+    DBG("TMix Receiver closed" << DBG_STR);
 }
 
 void OSCConnect::synchronize_with_X32() {
@@ -91,49 +102,57 @@ void OSCConnect::synchronize_with_X32() {
 }
 
 void OSCConnect::bind_socket_X32() {
-    bool success = true;
-    state.X32 = sender_X32.connectToSocket(*socket_this, ip_console.toString(), PORT_CONSOLE);
-    DBG("Create X32 socket send: " << (state.X32 ? "success" : "fail") << DBG_STR);
-    success &= state.X32;
-    if (success) {
-        state.receiver = receiver.connectToSocket(*socket_this);
-        success &= state.receiver;
-        DBG("Create X32 socket receive: " << (state.receiver ? "success" : "fail") << DBG_STR);
-        receiver.setSocket(socket_this);
-    }
-    if (success) {
-        DBG("X32 sockets bound successfully." << DBG_STR);
+    if(socket_console->getBoundPort() != -1)
+    {
+        state.X32 = sender_X32.connectToSocket(*socket_console, ip_console.toString(), PORT_CONSOLE);
+        // DBG("Create X32 socket send: " << (state.X32 ? "success" : "fail") << DBG_STR);
+        if (state.X32) {
+            state.X32 &= receiver_X32.connectToSocket(*socket_console);
+            // DBG("Create X32 socket receive: " << (state.X32 ? "success" : "fail") << DBG_STR);
+        }
+        if (state.X32) {
+            DBG("X32 sockets bound successfully." << DBG_STR);
+        }
     }
 }
 
-bool OSCConnect::bind_socket_tmix() {
-    bool success = sender_tmix.connectToSocket(*socket_this, ip_tmix.toString(), PORT_TMIX);
-    if (success) {
-        DBG("TheatreMix socket bound successfully." << DBG_STR);
+void OSCConnect::bind_socket_tmix() {
+    if(socket_tmix->getBoundPort() != -1)
+    {
+        state.TMix = sender_tmix.connectToSocket(*socket_tmix, ip_tmix.toString(), PORT_TMIX);
+        // DBG("Create TMix socket send: " << (state.TMix ? "success" : "fail") << DBG_STR);
+        if (state.TMix) {
+            state.TMix &= receiver_tmix.connectToSocket(*socket_tmix);
+            // DBG("Create TMix socket receive: " << (state.TMix ? "success" : "fail") << DBG_STR);
+        }
+        if (state.TMix) {
+            DBG("TMix sockets bound successfully." << DBG_STR);
+        }
     }
-    return success;
 }
 
 // TODO: ERROR HANDLING
 OSCConnect::Connected_State OSCConnect::bind_all_ports() {
-    socket_this->bindToPort(port_this, ip_host.toString());
+    socket_tmix->bindToPort(0, ip_host.toString());
+    socket_console->bindToPort(0, ip_host.toString());
+
+    bind_socket_tmix();
     bind_socket_X32();
-    state.TMix = bind_socket_tmix();
 
     return state;
 }
 
-void OSCConnect::set_ip_host(juce::IPAddress& addr) {
+void OSCConnect::set_ip_host(juce::IPAddress addr) {
     ip_host = addr;
     DBG("Host IP set to " << addr.toString() << DBG_STR);
 }
 
-void OSCConnect::set_ip_console(juce::IPAddress& addr) {
+void OSCConnect::set_ip_console(juce::IPAddress addr) {
     ip_console = addr;
     DBG("Console IP set to " << addr.toString() << DBG_STR);
 }
 
-void OSCConnect::set_ip_tmix(juce::IPAddress& addr) {
+void OSCConnect::set_ip_tmix(juce::IPAddress addr) {
     ip_tmix = addr;
     DBG("TMix IP set to " << addr.toString() << DBG_STR);
 }

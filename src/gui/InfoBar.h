@@ -2,6 +2,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "../OSCConnect.h"
 #include "../IPAddressBox.h"
 
 class InfoBar : public juce::Component {

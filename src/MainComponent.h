@@ -1,7 +1,8 @@
 #pragma once
 
 #include <juce_gui_extra/juce_gui_extra.h>
-#include "OSCConnect.h"
+
+#include "MessageProcessor.h"
 
 #include "gui/StripView.h"
 #include "gui/TMixView.h"

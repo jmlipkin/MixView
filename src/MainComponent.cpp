@@ -1,7 +1,6 @@
 #include "MainComponent.h"
 
 #include "Macros.h"
-#include "OSCConnect.h"
 
 #define CHANNEL_WIDTH 90
 

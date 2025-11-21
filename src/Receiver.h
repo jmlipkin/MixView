@@ -10,7 +10,7 @@
 class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<juce::OSCReceiver::RealtimeCallback> {
    private:
     juce::String arg_to_str(const juce::OSCArgument& arg);
-    juce::DatagramSocket* m_socket;
+    // juce::DatagramSocket& m_socket;
     MessageProcessor& mp;
 
    public:
@@ -19,7 +19,7 @@ class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<ju
         close();
     }
 
-    void setSocket(juce::DatagramSocket* socket) { m_socket = socket; }
+    // void setSocket(juce::DatagramSocket& socket) { m_socket = socket; }
 
     void open() { addListener(this); }
     void close() {

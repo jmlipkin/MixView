@@ -21,7 +21,6 @@ class OSCConnect : public juce::Component {
     struct Connected_State {
         bool X32{DISCONNECTED};
         bool TMix{DISCONNECTED};
-        bool receiver{DISCONNECTED};
     };
 
    private:
@@ -29,14 +28,17 @@ class OSCConnect : public juce::Component {
 
     Subscriber sender_X32;
     Subscriber sender_tmix;
-    Receiver receiver{mp};
+    Receiver receiver_X32{mp};
+    Receiver receiver_tmix{mp};
 
-    juce::DatagramSocket* socket_this;
+    juce::DatagramSocket* socket_console;
+    juce::DatagramSocket* socket_tmix;
+
     Connected_State state;
 
-    juce::IPAddress& ip_host;
-    juce::IPAddress& ip_console;
-    juce::IPAddress& ip_tmix;
+    juce::IPAddress ip_host;
+    juce::IPAddress ip_console;
+    juce::IPAddress ip_tmix;
 
     static const int PORT_CONSOLE{10023};
     static const int PORT_TMIX{32000};
@@ -46,7 +48,7 @@ class OSCConnect : public juce::Component {
     int m_timeout;
 
    public:
-    OSCConnect(MessageProcessor& processor, juce::IPAddress& host, juce::IPAddress& console, juce::IPAddress& tmix);
+    OSCConnect(MessageProcessor& processor, juce::IPAddress host, juce::IPAddress console, juce::IPAddress tmix);
     ~OSCConnect() override;
 
     // Attempt to connect OSC send/receive to stored IP address/port
@@ -55,7 +57,7 @@ class OSCConnect : public juce::Component {
     bool connect(juce::String ip, int port);
 
     void bind_socket_X32();
-    bool bind_socket_tmix();
+    void bind_socket_tmix();
 
     void synchronize_with_X32();
 
@@ -66,11 +68,11 @@ class OSCConnect : public juce::Component {
     int get_timeout() const { return m_timeout; }
 
     // Warning: undefined behavior if called while connected.
-    void set_ip_console(juce::IPAddress& addr);
+    void set_ip_console(juce::IPAddress addr);
     // Warning: undefined behavior if called while connected.
-    void set_ip_tmix(juce::IPAddress& addr);
+    void set_ip_tmix(juce::IPAddress addr);
     // Warning: undefined behavior if called while connected.
-    void set_ip_host(juce::IPAddress& addr);
+    void set_ip_host(juce::IPAddress addr);
 
     int get_port_console() const { return PORT_CONSOLE; }
     int get_port_tmix() const { return PORT_TMIX; }
