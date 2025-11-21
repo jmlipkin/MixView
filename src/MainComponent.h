@@ -21,22 +21,23 @@ class MainComponent final : public juce::Component
 public:
     //==============================================================================
     MainComponent();
-    ~MainComponent() override { connector.close(-1); }
 
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
-    //==============================================================================
-    // Your private member variables go here...
-    std::unique_ptr<MessageProcessor> mp;
-    OSCConnect connector;
 
+    std::unique_ptr<InfoBar> menu;
+    std::unique_ptr<TMixView> tmix;
+    
     std::vector<std::unique_ptr<StripView>> dca_strips;
     std::unique_ptr<StripView> lr_strip;
-    std::unique_ptr<TMixView> tmix;
-    std::unique_ptr<InfoBar> menu;
+
+    std::unique_ptr<MessageProcessor> mp;
+
+    ////////////
+    void initialize_strips();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

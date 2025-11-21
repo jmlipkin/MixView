@@ -1,28 +1,14 @@
 #include "OSCConnect.h"
 
-#include <juce_core/juce_core.h>
-
-OSCConnect::OSCConnect(MessageProcessor& processor) : mp(processor), m_timeout(0) {
+OSCConnect::OSCConnect(MessageProcessor& processor, juce::IPAddress& host, juce::IPAddress& console, juce::IPAddress& tmix) : mp(processor), ip_host(host), ip_console(console), ip_tmix(tmix), m_timeout(0) {
     sender_tmix.set_port(PORT_TMIX);
-    sender_X32.set_port(PORT_X32);
-
-    ip_X32 = new juce::IPAddress();
-    ip_tmix = new juce::IPAddress();
-    ip_this = new juce::IPAddress();
+    sender_X32.set_port(PORT_CONSOLE);
 
     socket_this = new juce::DatagramSocket();
     socket_this->setEnablePortReuse(true);
 }
 
 OSCConnect::~OSCConnect() {
-    if (ip_X32 != nullptr) delete ip_X32;
-    if (ip_tmix != nullptr) delete ip_tmix;
-    if (ip_this != nullptr) delete ip_this;
-
-    ip_this = nullptr;
-    ip_tmix = nullptr;
-    ip_X32 = nullptr;
-
     socket_this->shutdown();
 
     delete socket_this;
@@ -30,13 +16,15 @@ OSCConnect::~OSCConnect() {
 }
 
 void OSCConnect::open() {
-    receiver.open();
-    DBG("Receiver opened" << DBG_STR);
-    sender_X32.startThread();
-    DBG("X32 Send thread started" << DBG_STR);
-    sender_tmix.startThread();
-    DBG("TMix Send thread started" << DBG_STR);
-    synchronize_with_X32();
+    if (socket_this->getBoundPort() != -1) {
+        receiver.open();
+        DBG("Receiver opened" << DBG_STR);
+        sender_X32.startThread();
+        DBG("X32 Send thread started" << DBG_STR);
+        sender_tmix.startThread();
+        DBG("TMix Send thread started" << DBG_STR);
+        synchronize_with_X32();
+    }
 }
 
 void OSCConnect::close(int timeout_milliseconds) {
@@ -46,10 +34,6 @@ void OSCConnect::close(int timeout_milliseconds) {
     DBG("TMix Send thread stopped" << DBG_STR);
     receiver.close();
     DBG("Receiver closed" << DBG_STR);
-
-    socket_this->shutdown();
-    delete socket_this;
-    socket_this = new juce::DatagramSocket();
 }
 
 void OSCConnect::synchronize_with_X32() {
@@ -106,21 +90,11 @@ void OSCConnect::synchronize_with_X32() {
     DBG("X32 Synchronization complete" << DBG_STR);
 }
 
-bool OSCConnect::connect_to_tmix() {
-    bool success = sender_tmix.connectToSocket(*socket_this, ip_tmix->toString(), PORT_TMIX);
-    if (success) {
-        DBG("Connected successfully to TheatreMix" << DBG_STR);
-    }
-    return success;
-}
-
-OSCConnect::Connected_State OSCConnect::connect() {
-    bool success = socket_this->bindToPort(port_this, ip_this->toString());
-    if (success) {
-        state.X32 = sender_X32.connectToSocket(*socket_this, ip_X32->toString(), PORT_X32);
-        DBG("Create X32 socket send: " << (state.X32 ? "success" : "fail") << DBG_STR);
-        success &= state.X32;
-    }
+void OSCConnect::bind_socket_X32() {
+    bool success = true;
+    state.X32 = sender_X32.connectToSocket(*socket_this, ip_console.toString(), PORT_CONSOLE);
+    DBG("Create X32 socket send: " << (state.X32 ? "success" : "fail") << DBG_STR);
+    success &= state.X32;
     if (success) {
         state.receiver = receiver.connectToSocket(*socket_this);
         success &= state.receiver;
@@ -128,78 +102,38 @@ OSCConnect::Connected_State OSCConnect::connect() {
         receiver.setSocket(socket_this);
     }
     if (success) {
-        DBG("Connected successfully to X32" << DBG_STR);
+        DBG("X32 sockets bound successfully." << DBG_STR);
     }
-    state.TMix = connect_to_tmix();
+}
+
+bool OSCConnect::bind_socket_tmix() {
+    bool success = sender_tmix.connectToSocket(*socket_this, ip_tmix.toString(), PORT_TMIX);
+    if (success) {
+        DBG("TheatreMix socket bound successfully." << DBG_STR);
+    }
+    return success;
+}
+
+// TODO: ERROR HANDLING
+OSCConnect::Connected_State OSCConnect::bind_all_ports() {
+    socket_this->bindToPort(port_this, ip_host.toString());
+    bind_socket_X32();
+    state.TMix = bind_socket_tmix();
 
     return state;
 }
 
-void OSCConnect::set_ip_X32(std::string ip) {
-    if (ip_X32 != nullptr) {
-        delete ip_X32;
-        ip_X32 = nullptr;
-    }
-    ip_X32 = new juce::IPAddress(ip);
-
-    DBG("Set X32 IP" << DBG_STR);
+void OSCConnect::set_ip_host(juce::IPAddress& addr) {
+    ip_host = addr;
+    DBG("Host IP set to " << addr.toString() << DBG_STR);
 }
 
-void OSCConnect::set_ip_tmix(std::string ip) {
-    if (ip_tmix != nullptr) {
-        delete ip_tmix;
-        ip_tmix = nullptr;
-    }
-    ip_tmix = new juce::IPAddress(ip);
-
-    DBG("Set TMix IP" << DBG_STR);
-}
-void OSCConnect::set_ip_this(std::string ip) {
-    if (ip_this != nullptr) {
-        delete ip_this;
-        ip_tmix = nullptr;
-    }
-    ip_this = new juce::IPAddress(ip);
-
-    DBG("Set this IP" << DBG_STR);
+void OSCConnect::set_ip_console(juce::IPAddress& addr) {
+    ip_console = addr;
+    DBG("Console IP set to " << addr.toString() << DBG_STR);
 }
 
-juce::String IPAddressBox::filter_text(const juce::String& newInput) {
-    juce::String oldString = storedString;
-    juce::String newString = newInput;
-
-    m_isChanged = false;
-
-    // length validation
-    if (newString.length() < MIN_NUM_CHARS_IPV4 || newString.length() > MAX_NUM_CHARS_IPV4)
-        return oldString;
-
-    // character validation
-    if (!newString.containsOnly(ALLOWED_CHARS))
-        return oldString;
-
-    // content validation
-    std::vector<int> segments;
-    for (int i = 0; i < 4; i++) {
-        juce::String seg = newString.upToFirstOccurrenceOf(".",false,true);
-        newString = newString.substring(seg.length() + 1);
-        int val = seg.getIntValue();
-        if (val >= 0 && val <= 255)
-            segments.push_back(val);
-    }
-    // 4 segments parsed correctly
-    if(segments.size() == 4) {
-        newString = juce::String(segments[0]) + "." + juce::String(segments[1]) + "." + juce::String(segments[2]) + "." + juce::String(segments[3]);
-
-        if(newString != oldString)
-            m_isChanged = true;
-
-        return newString;
-    }
-
-    return oldString;
-}
-
-const juce::String& IPAddressBox::get_allowed_chars() {
-    return ALLOWED_CHARS;
+void OSCConnect::set_ip_tmix(juce::IPAddress& addr) {
+    ip_tmix = addr;
+    DBG("TMix IP set to " << addr.toString() << DBG_STR);
 }
