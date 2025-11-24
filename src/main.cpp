@@ -28,7 +28,6 @@ public:
     void shutdown() override
     {
         // Add your application's shutdown code here..
-
         mainWindow = nullptr; // (deletes our window)
     }
 
@@ -72,7 +71,8 @@ public:
             centreWithSize (getWidth(), getHeight());
            #endif
 
-            setVisible (true);
+            setResizable(false, false);
+            setVisible(true);
         }
 
         void closeButtonPressed() override

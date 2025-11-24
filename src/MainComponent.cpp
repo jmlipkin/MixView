@@ -1,63 +1,54 @@
 #include "MainComponent.h"
 
 #include "Macros.h"
-#include "X32Connect.h"
+
+#define CHANNEL_WIDTH 90
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() : mp(std::make_unique<MessageProcessor>())
 {
-    setSize (600, 400);
+    setSize (int(590*1.75), int(410*1.75));
+    getLookAndFeel().setDefaultSansSerifTypefaceName("Helvetica Neue");
+
+    // TODO: Move to new class?
+    initialize_strips();
+
+    // TMix initialization
+    tmix = std::make_unique<TMixView>(mp->get_tmix());
+    addAndMakeVisible(tmix.get());
+    tmix->setBounds(getWidth() / 3, 80, getWidth() / 3, 40);
+
+    // Menu initialization
+    menu = std::make_unique<InfoBar>(*mp);
+    addAndMakeVisible(menu.get());
+    menu->setBounds(0, 0, getWidth(), 50);
 
     DBG("Program started" << DBG_STR);
-
-    Xip_str.setText(connector.get_Xip(), juce::dontSendNotification);
-    addAndMakeVisible(Xip_str);
-
-    starter.setButtonText("Start");
-    starter.setToggleable(true);
-    starter.setToggleState(true, juce::dontSendNotification);
-    starter.onClick = [this]
-    { startButtonClicked(); };
-    addAndMakeVisible(starter);
-
-    connector.set_timeout(5000);
 }
 
 //==============================================================================
 void MainComponent::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setFont (juce::FontOptions (16.0f));
-    g.setColour (juce::Colours::white);
-    g.drawText ("hello tess :)", getLocalBounds(), juce::Justification::centred, true);
+    g.fillAll (juce::Colour(0xFF00141B));
 }
 
 void MainComponent::resized()
 {
-    Xip_str.setBounds(100, 10, 100, 20);
-    starter.setBounds(10, 10, 60, 20);
     // This is called when the MainComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
 }
 
-void MainComponent::startButtonClicked(){
-    if (starter.getToggleState())
+void MainComponent::initialize_strips()
+{
+    for (size_t i = 0; i < 8; i++)
     {
-        starter.setButtonText("Running");
-        if (connector.connect("10.5.136.59", 10023))
-        {
-            connector.run();
-        }
+        dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(int(i))));
+        addAndMakeVisible(dca_strips[i].get());
+        dca_strips[i]->setBounds(int(i) * (CHANNEL_WIDTH + 20) + 20, getHeight() - 550 - 20, CHANNEL_WIDTH, 550);
     }
-    else {
-        starter.setButtonText("Stopping...");
-        connector.close(-1);
-
-        DBG("Connector stopped thread" << DBG_STR);
-        starter.setButtonText("Start");
-    }
-    starter.setToggleState(!starter.getToggleState(), juce::dontSendNotification);
+    lr_strip = std::make_unique<StripView>(mp->get_main_st());
+    addAndMakeVisible(lr_strip.get());
+    lr_strip->setBounds(getWidth() - 30 - CHANNEL_WIDTH, getHeight() - 550 - 20, CHANNEL_WIDTH, 550);
 }
