@@ -59,6 +59,9 @@ class OSCConnect : public juce::Component {
     void bind_socket_X32();
     void bind_socket_tmix();
 
+    void free_socket_X32();
+    void free_socket_tmix();
+
     void synchronize_with_X32();
 
     void open();
@@ -80,4 +83,4 @@ class OSCConnect : public juce::Component {
     Connected_State get_connection_status() { return state; }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
-    };
+};

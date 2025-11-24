@@ -16,16 +16,12 @@ class IPAddressBox : public juce::Label {
         setEditable(true);
         onTextChange = nullptr;  // We don't validate on every keystroke
 
-        setColour(juce::Label::backgroundColourId, juce::Colour(0xFF0000DD));
+        setColour(juce::Label::backgroundColourId, juce::Colour(0xFF02141A));
         setColour(juce::Label::textColourId, juce::Colour(0xFFFFFFFF));
         setText(addr.toString(), juce::dontSendNotification);
         setJustificationType(juce::Justification::centred);
 
     }
-
-    // const std::unique_ptr<juce::IPAddress>& getIPAddress() const {
-    //     return addr;
-    // }
 
     void update_ip() {
         auto text = filter_text(getText(true));
@@ -33,17 +29,14 @@ class IPAddressBox : public juce::Label {
             setIPAddress(text);
             storedString = text;
             m_isChanged = true;
-            setText(text, juce::dontSendNotification);
         }
+        setText(text, juce::dontSendNotification);
     }
 
     juce::IPAddress getIPAddress() { return addr; }
 
     bool isChanged() { return m_isChanged; }
     void set_isChanged(bool new_state) { m_isChanged = new_state; }
-
-   protected:
-    // void textEditorReturnKeyPressed(juce::TextEditor& editor) override { update_ip(); }
 
    private:
     static const int MIN_NUM_CHARS_IPV4{7};
@@ -56,8 +49,6 @@ class IPAddressBox : public juce::Label {
     // Sets a new value programmatically and stores it as valid
     void setIPAddress(const juce::String& newAddress) {
         storedString = newAddress;
-        setText(newAddress, juce::dontSendNotification);
-
         addr = juce::IPAddress(newAddress);
     }
 };

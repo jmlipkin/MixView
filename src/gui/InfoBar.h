@@ -68,9 +68,9 @@ class InfoBar : public juce::Component {
     }
 
     void resized() override {
-        ip_host.setBounds(200, getHeight() * 1 / 2, 200, 18);
-        ip_console.setBounds(450, 10, 200, 18);
-        ip_tmix.setBounds(450, 30, 200, 18);
+        ip_host.setBounds(200, getHeight() * 1 / 2, 130, 18);
+        ip_console.setBounds(450, 10, 130, 18);
+        ip_tmix.setBounds(450, 30, 130, 18);
         starter.setBounds(10, getHeight() / 4, 100, getHeight() * 1 / 2);
     }
 

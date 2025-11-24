@@ -22,6 +22,7 @@ OSCConnect::~OSCConnect() {
 
 void OSCConnect::open() {
     if (socket_console->getBoundPort() != -1) {
+        bind_socket_X32();
         sender_X32.startThread();
         DBG("X32 Send thread started" << DBG_STR);
         receiver_X32.open();
@@ -29,6 +30,7 @@ void OSCConnect::open() {
         synchronize_with_X32();
     }
     if(socket_tmix->getBoundPort() != -1) {
+        bind_socket_tmix();
         sender_tmix.startThread();
         DBG("TMix Send thread started" << DBG_STR);
         receiver_tmix.open();
@@ -114,6 +116,15 @@ void OSCConnect::bind_socket_X32() {
             DBG("X32 sockets bound successfully." << DBG_STR);
         }
     }
+}
+
+void OSCConnect::free_socket_X32() {
+    sender_X32.disconnect();
+    receiver_X32.disconnect();
+}
+void OSCConnect::free_socket_tmix() {
+    sender_tmix.disconnect();
+    receiver_tmix.disconnect();
 }
 
 void OSCConnect::bind_socket_tmix() {
