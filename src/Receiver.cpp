@@ -4,7 +4,8 @@ void Receiver::oscMessageReceived(const juce::OSCMessage &message) {
     mp.add_to_buffer(message);
 }
 
-juce::String Receiver::arg_to_str(const juce::OSCArgument &arg) {
+juce::String Receiver::arg_to_str(const juce::OSCArgument &arg)
+{
     switch (arg.getType())
     {
     case 'f':
