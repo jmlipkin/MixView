@@ -129,4 +129,4 @@ juce::String ChannelStrip::unprocessed_string(juce::OSCMessage& message) {
     return msg_str;
 }
 
-const std::vector<juce::String> ChannelStrip::channel_type = {"/ch", "/auxin", "/bus", "/mtx", "/main/st","/dca"};
+const std::vector<juce::String> ChannelStrip::channel_type = {"/ch", "/auxin", "/bus", "/mtx", "/main/st","/dca", "/info"};

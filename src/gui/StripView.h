@@ -4,20 +4,20 @@
 
 #include "Fader.h"
 #include "ScribbleStrip.h"
-#include "State.h"
+#include "ChannelState.h"
 
 class StripView : public juce::Component {
    private:
     ChannelStrip* channel_data;
 
     std::unique_ptr<ScribbleStrip> scribble;
-    std::unique_ptr<State> state;
+    std::unique_ptr<ChannelState> state;
     std::unique_ptr<Fader> fader;
 
    public:
     StripView(ChannelStrip* channel) : channel_data(channel) {
         fader = std::make_unique<Fader>(channel_data);
-        state = std::make_unique<State>(channel_data);
+        state = std::make_unique<ChannelState>(channel_data);
         scribble = std::make_unique<ScribbleStrip>(channel_data);
 
         addAndMakeVisible(scribble.get());

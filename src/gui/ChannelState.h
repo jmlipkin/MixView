@@ -3,7 +3,7 @@
 #include "../ChannelStrip.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
-class State : public juce::Component, public juce::ChangeListener {
+class ChannelState : public juce::Component, public juce::ChangeListener {
     private:
      ChannelStrip* channel = nullptr;
      bool mute_color;
@@ -11,13 +11,13 @@ class State : public juce::Component, public juce::ChangeListener {
      juce::Colour C_STATE_OFF = juce::Colour(0xFF5B0001);
 
     public:
-     State(ChannelStrip* ch) : channel(ch) {
+     ChannelState(ChannelStrip* ch) : channel(ch) {
          channel->state_broadcaster.addChangeListener(this);
 
          mute_color = channel->get_state();
      }
 
-     ~State() override {
+     ~ChannelState() override {
          channel->state_broadcaster.removeChangeListener(this);
      }
 

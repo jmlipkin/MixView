@@ -37,6 +37,7 @@ class ChannelStrip {
         MATRIX,
         MAIN_ST,
         DCA,
+        INFO,
         INVALID
     } CH_TYPE;
 

@@ -80,6 +80,11 @@ class OSCConnect : public juce::Component {
     int get_port_console() const { return PORT_CONSOLE; }
     int get_port_tmix() const { return PORT_TMIX; }
 
+    Subscriber* get_sub_x32() { return &sender_X32; }
+    Subscriber* get_sub_tmix() { return &sender_tmix; }
+    Receiver* get_rec_x32() { return &receiver_X32; }
+    Receiver* get_rec_tmix() { return &receiver_tmix; }
+
     Connected_State get_connection_status() { return state; }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)

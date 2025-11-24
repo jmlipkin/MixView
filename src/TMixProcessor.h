@@ -24,13 +24,19 @@ class TMixProcessor {
    public:
     juce::ChangeBroadcaster tmix_broadcaster;
 
+    // std::atomic<double> time_since_last_thump_ms;
+    std::atomic<std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::steady_clock::duration>> last_thump_time;
+
    private:
     juce::String cue_number;
     juce::String cue_name;
     Str_Type msg_type;
 
+
    public:
-    TMixProcessor() {}
+    TMixProcessor() {
+        last_thump_time = std::chrono::high_resolution_clock::now();
+    }
 
     void set_cue_number(juce::String num) { cue_number = num; }
     juce::String get_cue_number() { return cue_number; }
@@ -70,6 +76,7 @@ class TMixProcessor {
             case THEATREMIX:
                 return;
             case THUMP:
+                last_thump_time.store(std::chrono::high_resolution_clock::now());
                 return;
             default:
                 return;

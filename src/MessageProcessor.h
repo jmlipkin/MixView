@@ -10,6 +10,9 @@
 #include "TMixProcessor.h"
 
 class MessageProcessor : public juce::Thread {
+    public:
+    std::atomic<std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::steady_clock::duration>> last_thump_time;
+
    private:
     const size_t NUM_IN_CH = 32;
     const size_t NUM_AUXINS = 8;
@@ -61,6 +64,8 @@ class MessageProcessor : public juce::Thread {
             dcas[i].set_id("DCA " + juce::String(i + 1));
             dcas[i].set_num_and_ap(i);
         }
+
+        last_thump_time.store(std::chrono::high_resolution_clock::now());
     }
     ~MessageProcessor() override {
         delete[] channels;
@@ -186,6 +191,9 @@ class MessageProcessor : public juce::Thread {
                 print_unprocessed_string(message);
                 break;
             }
+            case ChannelStrip::CH_TYPE::INFO: {
+                last_thump_time.store(std::chrono::high_resolution_clock::now());
+            }
             default:
                 print_unprocessed_string(message);
                 break;
@@ -197,6 +205,10 @@ class MessageProcessor : public juce::Thread {
 
         for (size_t i = 0; i < ChannelStrip::channel_type.size(); i++) {
             if (address.startsWith(ChannelStrip::channel_type[i])) {
+                // leave message alone if type info
+                if (i == ChannelStrip::CH_TYPE::INFO){
+                    return static_cast<ChannelStrip::CH_TYPE>(i);
+                }
                 address = address.substring(ChannelStrip::channel_type[i].length());
                 message.setAddressPattern(address);
                 return static_cast<ChannelStrip::CH_TYPE>(i);
@@ -256,6 +268,9 @@ class MessageProcessor : public juce::Thread {
                 }
             }
             case ChannelStrip::CH_TYPE::MAIN_ST: {
+                break;
+            }
+            case ChannelStrip::CH_TYPE::INFO: {
                 break;
             }
             case ChannelStrip::CH_TYPE::INVALID:
