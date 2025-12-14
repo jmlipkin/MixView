@@ -11,9 +11,6 @@
 
 class OSCConnect : public juce::Component {
    public:
-    juce::Label send_label;
-    juce::Label rec_label;
-
     enum STATUS_CONNECT {
         DISCONNECTED,
         CONNECTED
@@ -23,69 +20,74 @@ class OSCConnect : public juce::Component {
         bool TMix{DISCONNECTED};
     };
 
-   private:
-    MessageProcessor& mp;
-
-    Subscriber sender_X32;
-    Subscriber sender_tmix;
-    Receiver receiver_X32{mp};
-    Receiver receiver_tmix{mp};
-
-    juce::DatagramSocket* socket_console;
-    juce::DatagramSocket* socket_tmix;
-
-    Connected_State state;
-
-    juce::IPAddress ip_host;
-    juce::IPAddress ip_console;
-    juce::IPAddress ip_tmix;
-
-    static const int PORT_CONSOLE{10023};
-    static const int PORT_TMIX{32000};
-
-    int port_this{12345};
-
-    int m_timeout;
-
    public:
     OSCConnect(MessageProcessor& processor, juce::IPAddress host, juce::IPAddress console, juce::IPAddress tmix);
     ~OSCConnect() override;
 
+    // Main point of entry for starting the Subscribers and Receivers.
+    // Called when user wants to start listening to updates.
+    void open();
+
+    // Main exit point on disconnect. Stops send and receive threads.
+    void close(int timeout_milliseconds);
+
     // Attempt to connect OSC send/receive to stored IP address/port
     Connected_State bind_all_ports();
-    // Attempt to connect OSC send/receive to specified address/port
-    bool connect(juce::String ip, int port);
 
     void bind_socket_X32();
     void bind_socket_tmix();
-
-    void free_socket_X32();
-    void free_socket_tmix();
-
-    void synchronize_with_X32();
-
-    void open();
-    void close(int timeout_milliseconds);
 
     void set_timeout(int timeout) { m_timeout = timeout; }
     int get_timeout() const { return m_timeout; }
 
     // Warning: undefined behavior if called while connected.
+    void set_ip_host(juce::IPAddress addr);
+    // Warning: undefined behavior if called while connected.
     void set_ip_console(juce::IPAddress addr);
     // Warning: undefined behavior if called while connected.
     void set_ip_tmix(juce::IPAddress addr);
-    // Warning: undefined behavior if called while connected.
-    void set_ip_host(juce::IPAddress addr);
 
-    int get_port_console() const { return PORT_CONSOLE; }
-    int get_port_tmix() const { return PORT_TMIX; }
+    Subscriber* get_sub_x32() { return &m_sender_X32; }
+    Subscriber* get_sub_tmix() { return &m_sender_tmix; }
+    Receiver* get_rec_x32() { return &m_receiver_X32; }
+    Receiver* get_rec_tmix() { return &m_receiver_tmix; }
 
-    Subscriber* get_sub_x32() { return &sender_X32; }
-    Subscriber* get_sub_tmix() { return &sender_tmix; }
-    Receiver* get_rec_x32() { return &receiver_X32; }
-    Receiver* get_rec_tmix() { return &receiver_tmix; }
+    Connected_State get_connection_status() { return m_state; }
 
-    Connected_State get_connection_status() { return state; }
+   private:
+    // Disconnects send/receive sockets
+    void free_socket_X32();
+
+    // Disconnects send/receive sockets
+    void free_socket_tmix();
+
+    // Sends get request for all relevant parameters from the console
+    void synchronize_with_X32();
+
+   private:
+    juce::DatagramSocket* m_socket_console;
+    juce::DatagramSocket* m_socket_tmix;
+
+    juce::IPAddress m_ip_host;
+    juce::IPAddress m_ip_console;
+    juce::IPAddress m_ip_tmix;
+
+    Connected_State m_state;
+
+    static const int PORT_CONSOLE{10023};
+    static const int PORT_TMIX{32000};
+
+    int m_port_this{12345};
+
+    int m_timeout;
+
+    MessageProcessor& m_mp;
+
+    Subscriber m_sender_X32;
+    Subscriber m_sender_tmix;
+    Receiver m_receiver_X32{m_mp};
+    Receiver m_receiver_tmix{m_mp};
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
 };

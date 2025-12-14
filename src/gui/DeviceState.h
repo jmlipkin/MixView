@@ -33,11 +33,11 @@ class DeviceState : public juce::Component, public juce::ChangeListener {
 
     void paint(juce::Graphics& g) override {
         g.setColour(colormap[m_connect_status]);
-        g.fillRect(130, getHeight() / 2, getHeight()/2, getHeight()/2);
+        g.fillRect(130, getHeight() / 4, getHeight()/2, getHeight()/2);
     }
 
     void resized() override {
-
+        m_device_name.setBounds(0, 0, 120, getHeight());
     }
 
     void set_connect_state(bool state) { m_connect_status = state; }

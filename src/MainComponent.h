@@ -39,6 +39,7 @@ private:
 
     ////////////
     void initialize_strips();
+    void resize_strips();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

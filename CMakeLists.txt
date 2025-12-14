@@ -16,8 +16,6 @@ project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
 
-include(include/oscpack.cmake)
-
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
   PRODUCT_NAME "${TARGET_NAME}"
@@ -26,6 +24,8 @@ juce_add_gui_app(${TARGET_NAME}
   COMPANY_NAME "Lipkinize" # [EDIT]
   PLUGIN_MANUFACTURER_CODE "JLMV" # [EDIT]
   BUNDLE_ID "com.Lipkinize.MixView" # [EDIT]
+
+  ICON_BIG    "assets/mixview.icns"
 )
 
 target_compile_definitions(${TARGET_NAME}
@@ -60,8 +60,6 @@ juce_add_binary_data(BinaryData SOURCES ${BINARY_FILES})
 target_link_libraries(${TARGET_NAME}
   PRIVATE
   BinaryData
-
-  oscpack
   
   # ADD JUCE MODULES HERE # [EDIT]
   juce::juce_core

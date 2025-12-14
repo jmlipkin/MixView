@@ -4,29 +4,27 @@
 #include <juce_events/juce_events.h>
 #include <juce_osc/juce_osc.h>
 
-#include "Macros.h"
 #include "MessageProcessor.h"
 
 class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<juce::OSCReceiver::RealtimeCallback> {
+   public:
+    // Sets stored MessageProcessor to the referenced processor. 
+    Receiver(MessageProcessor& processor);
+
+    // Runs close().
+    ~Receiver() override;
+
+    // Adds itself as an OSCReceiver listener.
+    void open();
+
+    // Removes itself as an OSCReceiver listener and disconnects from
+    // the currently bound socket.
+    void close();
+
    private:
-    juce::String arg_to_str(const juce::OSCArgument& arg);
-    // juce::DatagramSocket& m_socket;
     MessageProcessor& mp;
 
-   public:
-    Receiver(MessageProcessor& processor) : mp(processor) {}
-    ~Receiver() override {
-        close();
-    }
-
-    // void setSocket(juce::DatagramSocket& socket) { m_socket = socket; }
-
-    void open() { addListener(this); }
-    void close() {
-        removeListener(this);
-        disconnect();
-    }
-
+    // Adds the received message to the stored MessageProcessor's buffer.
     void oscMessageReceived(const juce::OSCMessage& message) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Receiver)

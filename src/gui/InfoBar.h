@@ -8,13 +8,16 @@
 
 class InfoBar : public juce::Component {
    private:
-    IPAddressBox ip_console;
-    IPAddressBox ip_tmix;
-    IPAddressBox ip_host;
+    IPAddressBox ip_host { "This Device", false };
+    IPAddressBox ip_console { "Behringer X32", true };
+    IPAddressBox ip_tmix { "TheatreMix", true };
 
     DeviceState state_console;
     DeviceState state_tmix;
+
     juce::Label label_host;
+    juce::Label label_console;
+    juce::Label label_tmix;
 
     juce::TextButton starter;
 
@@ -33,6 +36,10 @@ class InfoBar : public juce::Component {
         state_console.add_as_listener(&connector.get_sub_x32()->state_broadcaster);
         state_console.set_label("Behringer X32");
 
+        ip_host.setExplicitFocusOrder(1);
+        ip_console.setExplicitFocusOrder(2);
+        ip_tmix.setExplicitFocusOrder(3);
+        
         addAndMakeVisible(ip_host);
         addAndMakeVisible(ip_console);
         addAndMakeVisible(ip_tmix);
