@@ -1,6 +1,6 @@
 build
 build-ios
 resources
-Lipkin_Jared_Proposal.docx
 *.DS_Store
 Demo Video
+*.docx
