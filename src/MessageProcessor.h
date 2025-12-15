@@ -37,13 +37,13 @@ class MessageProcessor : public juce::Thread {
 
     // Getter functions -- single element only
 
-    InputChannelStrip* get_in_ch(int idx) { return &m_channels[idx]; }
-    InputChannelStrip* get_auxin(int idx) { return &m_auxins[idx]; }
-    InputChannelStrip* get_bus(int idx) { return &m_buses[idx]; }
-    ChannelStrip* get_mtx(int idx) { return &m_matrices[idx]; }
-    ChannelStrip* get_main_st() { return m_main_st; }
-    DCAChannelStrip* get_dca(int idx) { return &m_dcas[idx]; }
-    TMixProcessor* get_tmix() { return m_tmix; }
+    InputChannelStrip* get_in_ch(int idx) const { return &m_channels[idx]; }
+    InputChannelStrip* get_auxin(int idx) const { return &m_auxins[idx]; }
+    InputChannelStrip* get_bus(int idx) const { return &m_buses[idx]; }
+    ChannelStrip* get_mtx(int idx) const { return &m_matrices[idx]; }
+    ChannelStrip* get_main_st() const { return m_main_st; }
+    DCAChannelStrip* get_dca(int idx) const { return &m_dcas[idx]; }
+    TMixProcessor* get_tmix() const { return m_tmix; }
 
    private:
     // Main dispatching logic for message

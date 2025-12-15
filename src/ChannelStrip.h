@@ -150,7 +150,8 @@ class InputChannelStrip : public ChannelStrip {
    protected:
     typedef struct DCA_Assign {
         juce::OSCAddress ap = "/grp/dca";
-        std::bitset<32> assignments;
+        // TODO: Make size dynamic
+        std::bitset<8> assignments;
     } DCA_Assign;
 
    public:
@@ -164,7 +165,8 @@ class InputChannelStrip : public ChannelStrip {
 
     // TODO: Fix DCA storing
     void set_dca_assignments(int val) { dca_assignments.assignments = (unsigned long long)val; }
-    juce::String get_dca_assignments() { return juce::String(dca_assignments.assignments.to_string()); }
+    std::bitset<8> get_dca_assignments() { return dca_assignments.assignments; }
+    juce::String get_dca_assignments_string() { return juce::String(dca_assignments.assignments.to_string()); }
 
     void update_parameter(juce::OSCMessage& message) override;
 };

@@ -14,11 +14,13 @@ class StripView : public juce::Component {
     std::unique_ptr<ChannelState> state;
     std::unique_ptr<Fader> fader;
 
+    std::shared_ptr<MessageProcessor> mp;
+
    public:
-    StripView(ChannelStrip* channel) : channel_data(channel) {
+    StripView(ChannelStrip* channel, std::shared_ptr<MessageProcessor> processor) : channel_data(channel), mp(processor) {
         fader = std::make_unique<Fader>(channel_data);
         state = std::make_unique<ChannelState>(channel_data);
-        scribble = std::make_unique<ScribbleStrip>(channel_data);
+        scribble = std::make_unique<ScribbleStrip>(channel_data, mp);
 
         addAndMakeVisible(scribble.get());
         addAndMakeVisible(state.get());
@@ -33,9 +35,6 @@ class StripView : public juce::Component {
         fader->setBounds(0, int(scribble_height + 2 * spacer), getWidth(), (int)fader_height);
         state->setBounds(0, int(scribble_height + fader_height + 3 * spacer), getWidth(), (int)state_height);
     }
-
-    // TODO: Do I need this??
-    // void paint(juce::Graphics& g) override {}
 
     void resized() override {
         float scribble_height = 0.12f * getHeight();

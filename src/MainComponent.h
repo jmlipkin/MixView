@@ -34,8 +34,7 @@ private:
     
     std::vector<std::unique_ptr<StripView>> dca_strips;
     std::unique_ptr<StripView> lr_strip;
-
-    std::unique_ptr<MessageProcessor> mp;
+    std::shared_ptr<MessageProcessor> mp;
 
     ////////////
     void initialize_strips();
