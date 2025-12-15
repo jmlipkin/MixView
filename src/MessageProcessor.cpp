@@ -135,6 +135,7 @@ void MessageProcessor::process_message(juce::OSCMessage& message) {
         }
         case ChannelStrip::CH_TYPE::INFO: {
             last_thump_time.store(std::chrono::high_resolution_clock::now());
+            break;
         }
         default:
             print_unprocessed_string(message);

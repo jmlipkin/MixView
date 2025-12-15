@@ -5,7 +5,7 @@
 #define CHANNEL_WIDTH 90
 
 //==============================================================================
-MainComponent::MainComponent() : mp(std::make_unique<MessageProcessor>())
+MainComponent::MainComponent() : mp(std::make_shared<MessageProcessor>())
 {
     getLookAndFeel().setDefaultSansSerifTypefaceName("Helvetica Neue");
 
@@ -44,10 +44,10 @@ void MainComponent::initialize_strips()
 {
     for (size_t i = 0; i < 8; i++)
     {
-        dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(int(i))));
+        dca_strips.push_back(std::make_unique<StripView>(mp->get_dca(int(i)), mp));
         addAndMakeVisible(dca_strips[i].get());
     }
-    lr_strip = std::make_unique<StripView>(mp->get_main_st());
+    lr_strip = std::make_unique<StripView>(mp->get_main_st(), mp);
     addAndMakeVisible(lr_strip.get());
 }
 
