@@ -27,5 +27,4 @@ class Receiver : public juce::OSCReceiver, public juce::OSCReceiver::Listener<ju
     // Adds the received message to the stored MessageProcessor's buffer.
     void oscMessageReceived(const juce::OSCMessage& message) override;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Receiver)
 };

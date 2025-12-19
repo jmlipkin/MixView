@@ -9,6 +9,7 @@ class IPAddressBox : public juce::Label {
    public:
     IPAddressBox(juce::String device_name, bool display_name);
 
+    // Updates text on valid entered IP address
     void update_ip();
 
     void set_isChanged(bool new_state) { m_isChanged = new_state; }

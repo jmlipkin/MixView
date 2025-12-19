@@ -2,20 +2,11 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "ChannelState.h"
 #include "Fader.h"
 #include "ScribbleStrip.h"
-#include "ChannelState.h"
 
 class StripView : public juce::Component {
-   private:
-    ChannelStrip* channel_data;
-
-    std::unique_ptr<ScribbleStrip> scribble;
-    std::unique_ptr<ChannelState> state;
-    std::unique_ptr<Fader> fader;
-
-    std::shared_ptr<MessageProcessor> mp;
-
    public:
     StripView(ChannelStrip* channel, std::shared_ptr<MessageProcessor> processor) : channel_data(channel), mp(processor) {
         fader = std::make_unique<Fader>(channel_data);
@@ -46,4 +37,13 @@ class StripView : public juce::Component {
         fader->setBounds(0, (int)(scribble_height + 2 * spacer), getWidth(), (int)fader_height);
         state->setBounds(0, (int)(scribble_height + fader_height + 3 * spacer), getWidth(), (int)state_height);
     }
+
+   private:
+    ChannelStrip* channel_data;
+
+    std::unique_ptr<ScribbleStrip> scribble;
+    std::unique_ptr<ChannelState> state;
+    std::unique_ptr<Fader> fader;
+
+    std::shared_ptr<MessageProcessor> mp;
 };

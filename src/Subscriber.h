@@ -56,6 +56,4 @@ class Subscriber : public juce::OSCSender, public juce::Thread {
 
     TMixProcessor* tmix{nullptr};
     MessageProcessor* mp{nullptr};
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Subscriber)
 };

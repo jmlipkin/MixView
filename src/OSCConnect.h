@@ -77,8 +77,6 @@ class OSCConnect : public juce::Component {
     static const int PORT_CONSOLE{10023};
     static const int PORT_TMIX{32000};
 
-    int m_port_this{12345};
-
     int m_timeout;
 
     MessageProcessor& m_mp;
@@ -88,6 +86,4 @@ class OSCConnect : public juce::Component {
     Receiver m_receiver_X32{m_mp};
     Receiver m_receiver_tmix{m_mp};
 
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCConnect)
 };

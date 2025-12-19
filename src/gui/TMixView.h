@@ -3,11 +3,6 @@
 #include "../TMixProcessor.h"
 
 class TMixView : public juce::Component, public juce::ChangeListener {
-   private:
-    TMixProcessor* tmix_data;
-    juce::Label cue_number;
-    juce::Label cue_name;
-
    public:
     TMixView(TMixProcessor* tmix) : tmix_data(tmix) {
         tmix_data->tmix_broadcaster.addChangeListener(this);
@@ -31,12 +26,12 @@ class TMixView : public juce::Component, public juce::ChangeListener {
 
         g.setColour(juce::Colour(0xFF02141A));
         g.fillRoundedRectangle(bubble_spacing, bubble_spacing, getWidth() / 5, getHeight() - 2 * bubble_spacing, 9);
-        g.fillRoundedRectangle(2 * bubble_spacing + getWidth() / 5, bubble_spacing, getWidth() - (getWidth()/5 + 3 * bubble_spacing), getHeight() - 2 * bubble_spacing, 9);
+        g.fillRoundedRectangle(2 * bubble_spacing + getWidth() / 5, bubble_spacing, getWidth() - (getWidth() / 5 + 3 * bubble_spacing), getHeight() - 2 * bubble_spacing, 9);
     }
 
     void resized() override {
         cue_number.setBounds(6, 6, getWidth() / 5, getHeight() - 12);
-        cue_name.setBounds(2 * 6 + getWidth() / 5 + 6, 6, getWidth() - (getWidth()/5 + 3 * 6), getHeight() - 2 * 6);
+        cue_name.setBounds(2 * 6 + getWidth() / 5 + 6, 6, getWidth() - (getWidth() / 5 + 3 * 6), getHeight() - 2 * 6);
     }
 
     void changeListenerCallback(juce::ChangeBroadcaster* source) override {
@@ -46,4 +41,9 @@ class TMixView : public juce::Component, public juce::ChangeListener {
         }
         repaint();
     }
+
+   private:
+    TMixProcessor* tmix_data;
+    juce::Label cue_number;
+    juce::Label cue_name;
 };
